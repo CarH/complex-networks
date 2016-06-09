@@ -1,12 +1,13 @@
 LIBS=libs/graph
-INCLUDE_PATH=libs/
+INCLUDE_PATH=libs/graph/include/
+LIBRARIES_PATH=libraries/
 CC=g++
 CFLAGS=-c -Wall
 
 all: clean compile
 
 compile: libraries main.o
-	$(CC) -I./libraries main.o -o prog
+	$(CC) $(LIBRARIES_PATH)*.o main.o -o prog
 
 libraries:
 	mkdir libraries/
@@ -18,7 +19,12 @@ libraries:
 	done
 
 main.o:
-	$(CC) $(CFLAGS) -I./libs/graph/include/ src/main.cpp
+	$(CC) $(CFLAGS) -I./$(INCLUDE_PATH) src/main.cpp
+
+test:
+	./prog dataset/facebook.links
+	./prog dataset/foursquare.links
+	./prog dataset/gplus.links
 
 clean:
 	rm -rf libraries/ main.o prog
