@@ -22,6 +22,7 @@ int main(int argc, char const *argv[])
 		}
 		cerr<<"Degree(2290) = " << origNet.getDegree(2290)<<endl;
 		cerr<<"Density = "<<origNet.getDensity()<<endl;
+		cerr<<"AVG Degree: "<<origNet.getAvgDegree()<<endl;
 		inFile.close();
 	}
 

@@ -21,3 +21,12 @@ double Graph::getDensity() {
 	double numPossibleEdges = (this->vertices.size()*(this->vertices.size()-1))/2;
 	return (double) this->numEdges / numPossibleEdges;
 }
+double Graph::getAvgDegree() {
+	int degCnt=0;
+	for (int i=0; i<N; i++) {
+		if (!(this->adjList[i].empty())) {
+			degCnt += this->adjList[i].size();
+		}
+	}
+	return degCnt/(double)this->vertices.size();
+}

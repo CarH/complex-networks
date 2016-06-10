@@ -28,5 +28,6 @@
 				void connectu(int u, int v);
 				int getDegree(int u);
 				double getDensity();
+				double getAvgDegree();
 		};
 	#endif
