@@ -6,6 +6,7 @@
 
 	// Included dependencies
 	#include <algorithm>
+	#include <set>
 	#include <cmath>
 	#include "Graph.hpp"
 
@@ -38,7 +39,7 @@
 			 * @param  v [description]
 			 * @return   the index of common neighbors
 			 */
-			std::vector<int> CN_Nodes(int u, int v);
+			std::set<int> CN_Nodes(int u, int v);
 
 			/**
 			 * Adamic-Adar's Coefficient
@@ -48,6 +49,19 @@
 			 */
 			
 			double adamicAdarCoefficient(int u, int v);
+
+			/**
+			 * Number of tripplets that vertex u participates
+			 * @param  u [description]
+			 * @return   (1/2)*degree(u)*(degree(u)-1)
+			 */
+			int getTrippletsNumber(int u);
+			/**
+			 * Number of tripplets that vertex u participates
+			 * @param  u [description]
+			 * @return  # triangles
+			 */
+			int getTrianglesNumber(int u);
 	};
 
 #endif

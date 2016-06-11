@@ -9,46 +9,56 @@ ComplexNetwork::~ComplexNetwork() {
 	delete this->net;
 }
 int ComplexNetwork::CN(int u, int v) {
-	std::vector<int> uNeighbors = this->net->getAdjList(u);
-	std::vector<int> vNeighbors = this->net->getAdjList(v);
+	// std::vector<int> uNeighbors = this->net->getAdjList(u);
+	// std::vector<int> vNeighbors = this->net->getAdjList(v);
+	std::set<int> uNeighbors = this->net->getAdjList(u);
+	std::set<int> vNeighbors = this->net->getAdjList(v);
+
 	int cnt=0;
 	
 	// To be able to perform binary_search
-	sort(uNeighbors.begin(), uNeighbors.end());
+	// sort(uNeighbors.begin(), uNeighbors.end());
 
 	// Test if they are already connected => jaccardCoefficient = 0	
-	if (binary_search(uNeighbors.begin(), uNeighbors.end(), v)) {
+	// if (binary_search(uNeighbors.begin(), uNeighbors.end(), v)) {
+	if (uNeighbors.count(v)) {
 		return 0; ///// CHECK THIS SHIT
 	}
 	else {
-		for (std::vector<int>::iterator it = vNeighbors.begin(); it != vNeighbors.end(); it++) {
-			if (binary_search(uNeighbors.begin(), uNeighbors.end(), *it))
+		for (std::set<int>::iterator it = vNeighbors.begin(); it != vNeighbors.end(); it++) {
+			// if (binary_search(uNeighbors.begin(), uNeighbors.end(), *it))
+			if (uNeighbors.count(*it)!=0)
 				cnt++;
 		}
 		return cnt;
 	}
 }
-
-vector<int> ComplexNetwork::CN_Nodes(int u, int v) {
-	std::vector<int> uNeighbors = this->net->getAdjList(u);
-	std::vector<int> vNeighbors = this->net->getAdjList(v);
-	std::vector<int> result;
+ 
+set<int> ComplexNetwork::CN_Nodes(int u, int v) {
+	// std::vector<int> uNeighbors = this->net->getAdjList(u);
+	// std::vector<int> vNeighbors = this->net->getAdjList(v);
+	std::set<int> uNeighbors = this->net->getAdjList(u);
+	std::set<int> vNeighbors = this->net->getAdjList(v);
+	std::set<int> result;
 	int cnt=0;
 	
 	// To be able to perform binary_search
-	sort(uNeighbors.begin(), uNeighbors.end());
+	// sort(uNeighbors.begin(), uNeighbors.end());
 
 	// Test if they are already connected => jaccardCoefficient = 0	
-	if (binary_search(uNeighbors.begin(), uNeighbors.end(), v)) {
+	// if (binary_search(uNeighbors.begin(), uNeighbors.end(), v)) {
+	if (uNeighbors.count(v)) {
 		return result; ///// CHECK THIS SHIT
 	}
 	else {
-		for (std::vector<int>::iterator it = vNeighbors.begin(); it != vNeighbors.end(); it++) {
-			if (binary_search(uNeighbors.begin(), uNeighbors.end(), *it))
-				result.push_back(*it);
+		for (std::set<int>::iterator it = vNeighbors.begin(); it != vNeighbors.end(); it++) {
+			// if (binary_search(uNeighbors.begin(), uNeighbors.end(), *it))
+			if (uNeighbors.count(*it)!=0)
+				result.insert(*it);
 		}
 		return result;
 	}
+
 }
 
 double ComplexNetwork::jaccardCoefficient(int u, int v) {
@@ -56,11 +66,34 @@ double ComplexNetwork::jaccardCoefficient(int u, int v) {
 }
 
 double ComplexNetwork::adamicAdarCoefficient(int u, int v){
-	std::vector<int> commonNeighbors = this->CN_Nodes(u,v);
+	std::set<int> commonNeighbors = this->CN_Nodes(u,v);
 	double coefficient = 0;
-	for(vector<int>::iterator it = commonNeighbors.begin();it!=commonNeighbors.end();it++){
+	for(set<int>::iterator it = commonNeighbors.begin();it!=commonNeighbors.end();it++){
 		int degree=this->net->getDegree(*it);//Note to self: degree is never gonna be 0, because it is already a common neighbor
 		coefficient+=1.0/(log10(degree));
 	}
 	return coefficient;
+}
+int ComplexNetwork::getTrippletsNumber(int u){
+	int degree = this->net->getDegree(u);
+	return (degree*(degree-1))/2;
+}
+
+int ComplexNetwork::getTrianglesNumber(int u){
+	// int counter=0;
+	// set<int> uNeighbors = this->net->getAdjList(u);
+	// //sejam i e j vizinhos de u, checar se eles estao ligados
+	// for(set<int>::iterator itI=uNeighbors.begin();itI!=uNeighbors.end();itI++){
+	// 	int i = *itI;
+	// 	set<int> iNeighbors = this->net->getAdjList(i);
+	// 	for(set<int>::iterator itJ=itI+1;itJ!=uNeighbors.end();itJ++){//pegando outros vizinhos de u
+	// 		int j = *itJ;
+	// 		// if(binary_search(iNeighbors.begin(), iNeighbors.end(),j)){//checa se j eh vizinho de i
+	// 		if(iNeighbors.count(j)>0){//checa se j eh vizinho de i
+	// 			counter++;
+	// 		}
+	// 	}	
+	// }
+	// return counter;
+
 }
