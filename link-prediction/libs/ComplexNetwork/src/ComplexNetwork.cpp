@@ -110,8 +110,8 @@ double ComplexNetwork::localClusteringCoefficient(int u){
 }
 double ComplexNetwork::globalClusteringCoefficient(){
 	
-	double localTriangles;
-	double localTripplets;
+	double localTriangles=0;
+	double localTripplets=0;
 	set<int> vertices = this->net->getVertices();
 	for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
 		localTriangles += this->getTrianglesNumber(*it);//3*(getTrianglesNumber/3)
