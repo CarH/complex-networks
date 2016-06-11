@@ -32,5 +32,6 @@
 			double getDensity();
 			double getAvgDegree();
 			std::set<int> getAdjList(int u);
+			std::set<int> getVertices();
 	};
 #endif

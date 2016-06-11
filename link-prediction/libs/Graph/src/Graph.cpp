@@ -33,3 +33,6 @@ double Graph::getAvgDegree() {
 std::set<int> Graph::getAdjList(int u) {
 	return this->adjList[u];
 }
+std::set<int> Graph::getVertices(){
+	return this->vertices;
+}

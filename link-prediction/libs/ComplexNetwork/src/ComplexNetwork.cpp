@@ -80,20 +80,43 @@ int ComplexNetwork::getTrippletsNumber(int u){
 }
 
 int ComplexNetwork::getTrianglesNumber(int u){
-	// int counter=0;
-	// set<int> uNeighbors = this->net->getAdjList(u);
-	// //sejam i e j vizinhos de u, checar se eles estao ligados
-	// for(set<int>::iterator itI=uNeighbors.begin();itI!=uNeighbors.end();itI++){
-	// 	int i = *itI;
-	// 	set<int> iNeighbors = this->net->getAdjList(i);
-	// 	for(set<int>::iterator itJ=itI+1;itJ!=uNeighbors.end();itJ++){//pegando outros vizinhos de u
-	// 		int j = *itJ;
-	// 		// if(binary_search(iNeighbors.begin(), iNeighbors.end(),j)){//checa se j eh vizinho de i
-	// 		if(iNeighbors.count(j)>0){//checa se j eh vizinho de i
-	// 			counter++;
-	// 		}
-	// 	}	
-	// }
-	// return counter;
+	int counter=0;
+	set<int> uNeighbors = this->net->getAdjList(u);
+	vector<int> intersection;
+	//sejam i e j vizinhos de u, checar se eles estao ligados
+	for(set<int>::iterator itI=uNeighbors.begin();itI!=uNeighbors.end();itI++){
+		int i = *itI;
+		intersection.clear();
+		set<int> iNeighbors = this->net->getAdjList(i);
+		// set_intersection(iNeighbors.begin(),iNeighbors.end(),uNeighbors.begin(),uNeighbors.end(),intersection.begin());
+		// counter+=intersection.size()-2;//aqui esta contando duas vezes //retira 2 pq u esta contando
+		for(set<int>::iterator itJ=itI;itJ!=uNeighbors.end();itJ++){//pegando outros vizinhos de u
+			int j = *itJ;
+			// if(binary_search(iNeighbors.begin(), iNeighbors.end(),j)){//checa se j eh vizinho de i
+			if(iNeighbors.count(j)>0){//checa se j eh vizinho de i
+				counter++;
+			}
+		}	
+	}
+	return counter;
+	// return counter/2;
 
+}
+
+double ComplexNetwork::localClusteringCoefficient(int u){
+	int triangles = this->getTrianglesNumber(u);
+	int tripplets = this->getTrippletsNumber(u);
+	return (tripplets!=0) ? ((double)triangles)/((double) tripplets):0;
+}
+double ComplexNetwork::globalClusteringCoefficient(){
+	
+	double localTriangles;
+	double localTripplets;
+	set<int> vertices = this->net->getVertices();
+	for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
+		localTriangles += this->getTrianglesNumber(*it);//3*(getTrianglesNumber/3)
+		localTripplets += this->getTrippletsNumber(*it);
+		
+	}
+	return localTriangles/localTripplets;
 }

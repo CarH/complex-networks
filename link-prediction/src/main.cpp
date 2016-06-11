@@ -28,6 +28,8 @@ int main(int argc, char const *argv[])
 		cerr<<"AVG Degree: "<<origNet.getAvgDegree()<<endl;
 		cerr<<"Commmon Neighbors (2090, 2025): "<< compNet->CN(2090,2025)<<endl;
 		cerr<<"Adamic-Adar (2090,2025): "<<compNet->adamicAdarCoefficient(2090,2025)<<endl;
+		cerr<<"Local Clust.(2290) = " << compNet->localClusteringCoefficient(2290)<<endl;
+		cerr<<"Global Clust.() = " << compNet->globalClusteringCoefficient()<<endl;
 		// cerr<<"Common Neighbors Node(2090,2025): "
 		inFile.close();
 		delete compNet;

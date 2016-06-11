@@ -51,6 +51,22 @@
 			double adamicAdarCoefficient(int u, int v);
 
 			/**
+			 * Local Clustering Coefficient
+			 * @param  u [description]
+			 * @return   #triangles/#tripplets
+			 */
+			
+			double localClusteringCoefficient(int u);
+
+			/**
+			 * Global Clustering Coefficient
+			 * @param  u [description]
+			 * @return   3*#triangles/#tripplets
+			 */
+			
+			double globalClusteringCoefficient();
+
+			/**
 			 * Number of tripplets that vertex u participates
 			 * @param  u [description]
 			 * @return   (1/2)*degree(u)*(degree(u)-1)
@@ -62,6 +78,7 @@
 			 * @return  # triangles
 			 */
 			int getTrianglesNumber(int u);
+
 	};
 
 #endif

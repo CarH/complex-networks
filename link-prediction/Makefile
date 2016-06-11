@@ -9,7 +9,7 @@ INCLUDE_COMPLEX_NET_PATH=libs/ComplexNetwork/include
 SRC_COMPLEX_NET_PATH=libs/ComplexNetwork/src/ComplexNetwork.cpp
 LIBRARIES_PATH=libraries/
 CC=g++
-CFLAGS=-c -Wall
+CFLAGS=-c -Wall -g
 
 all: clean mkdirLibraries compile
 
