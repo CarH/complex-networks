@@ -2,7 +2,8 @@
 #include <fstream>
 #include <string>
 #include <map>
-#include "graph.hpp"
+#include "Graph.hpp"
+#include "ComplexNetwork.hpp"
 
 using namespace std;
 
@@ -23,6 +24,7 @@ int main(int argc, char const *argv[])
 		cerr<<"Degree(2290) = " << origNet.getDegree(2290)<<endl;
 		cerr<<"Density = "<<origNet.getDensity()<<endl;
 		cerr<<"AVG Degree: "<<origNet.getAvgDegree()<<endl;
+		// cerr<<"Commmon Neighbors (2090, 2025): "<<
 		inFile.close();
 	}
 
