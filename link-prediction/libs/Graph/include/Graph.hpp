@@ -11,7 +11,7 @@
 			int v;
 			int numEdges;
 			std::set<int> vertices; // Segestoes sao bem vindas aqui
-			std::vector<int> adjList[N];
+			std::set<int> adjList[N];
 		public:
 			Graph();
 			~Graph();
@@ -31,6 +31,6 @@
 			int getDegree(int u);
 			double getDensity();
 			double getAvgDegree();
-			std::vector<int> getAdjList(int u);
+			std::set<int> getAdjList(int u);
 	};
 #endif

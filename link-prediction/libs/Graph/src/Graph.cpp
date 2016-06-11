@@ -5,7 +5,7 @@ Graph::Graph() {
 }
 Graph::~Graph() {}
 void Graph::connect(int u, int v) {
-	this->adjList[u].push_back(v);
+	this->adjList[u].insert(v);
 	this->vertices.insert(u);
 	this->vertices.insert(v);
 }
@@ -30,6 +30,6 @@ double Graph::getAvgDegree() {
 	}
 	return degCnt/(double)this->vertices.size();
 }
-std::vector<int> Graph::getAdjList(int u) {
+std::set<int> Graph::getAdjList(int u) {
 	return this->adjList[u];
 }
