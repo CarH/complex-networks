@@ -9,29 +9,15 @@ ComplexNetwork::~ComplexNetwork() {
 	delete this->net;
 }
 int ComplexNetwork::CN(int u, int v) {
-	// std::vector<int> uNeighbors = this->net->getAdjList(u);
-	// std::vector<int> vNeighbors = this->net->getAdjList(v);
 	std::set<int> uNeighbors = this->net->getAdjList(u);
 	std::set<int> vNeighbors = this->net->getAdjList(v);
-
 	int cnt=0;
 	
-	// To be able to perform binary_search
-	// sort(uNeighbors.begin(), uNeighbors.end());
-
-	// Test if they are already connected => jaccardCoefficient = 0	
-	// if (binary_search(uNeighbors.begin(), uNeighbors.end(), v)) {
-	if (uNeighbors.count(v)) {
-		return 0; ///// CHECK THIS SHIT
-	}
-	else {
-		for (std::set<int>::iterator it = vNeighbors.begin(); it != vNeighbors.end(); it++) {
-			// if (binary_search(uNeighbors.begin(), uNeighbors.end(), *it))
-			if (uNeighbors.count(*it)!=0)
-				cnt++;
-		}
-		return cnt;
-	}
+	for (std::set<int>::iterator it = vNeighbors.begin(); it != vNeighbors.end(); it++)
+		if (uNeighbors.count(*it)!=0)
+			cnt++;
+	
+	return cnt;
 }
  
 set<int> ComplexNetwork::CN_Nodes(int u, int v) {
@@ -40,7 +26,6 @@ set<int> ComplexNetwork::CN_Nodes(int u, int v) {
 	std::set<int> uNeighbors = this->net->getAdjList(u);
 	std::set<int> vNeighbors = this->net->getAdjList(v);
 	std::set<int> result;
-	int cnt=0;
 	
 	// To be able to perform binary_search
 	// sort(uNeighbors.begin(), uNeighbors.end());
@@ -62,6 +47,8 @@ set<int> ComplexNetwork::CN_Nodes(int u, int v) {
 }
 
 double ComplexNetwork::jaccardCoefficient(int u, int v) {
+	if (this->net->getAdjList(u).count(v))
+		return 0; /// We want to avoid create links between nodes already connected
 	return this->CN(u,v)/(double)(this->net->getAdjList(u).size() + this->net->getAdjList(v).size());
 }
 
