@@ -33,5 +33,16 @@
 			double getAvgDegree();
 			std::set<int> getAdjList(int u);
 			std::set<int> getVertices();
+
+			/**
+			 * Remove Verticer with degree lower or equal than d
+			 * @param  d degree
+			 * @return   The new graph without the vertices with degree lower or equal than d
+			 */
+			Graph removeVerticesLowDegree(int d=0);
+			
+			int getVerticesQnt();
+			int getEdgesQnt();
+
 	};
 #endif
