@@ -32,17 +32,14 @@ set<int> ComplexNetwork::CN_Nodes(int u, int v) {
 
 	// Test if they are already connected => jaccardCoefficient = 0	
 	// if (binary_search(uNeighbors.begin(), uNeighbors.end(), v)) {
-	if (uNeighbors.count(v)) {
-		return result; ///// CHECK THIS SHIT
+	
+	for (std::set<int>::iterator it = vNeighbors.begin(); it != vNeighbors.end(); it++) {
+		// if (binary_search(uNeighbors.begin(), uNeighbors.end(), *it))
+		if (uNeighbors.count(*it)!=0)
+			result.insert(*it);
 	}
-	else {
-		for (std::set<int>::iterator it = vNeighbors.begin(); it != vNeighbors.end(); it++) {
-			// if (binary_search(uNeighbors.begin(), uNeighbors.end(), *it))
-			if (uNeighbors.count(*it)!=0)
-				result.insert(*it);
-		}
-		return result;
-	}
+	return result;
+
 
 }
 
@@ -54,6 +51,8 @@ double ComplexNetwork::jaccardCoefficient(int u, int v) {
 
 double ComplexNetwork::adamicAdarCoefficient(int u, int v){
 	std::set<int> commonNeighbors = this->CN_Nodes(u,v);
+	commonNeighbors.erase(u);
+	commonNeighbors.erase(v);
 	double coefficient = 0;
 	for(set<int>::iterator it = commonNeighbors.begin();it!=commonNeighbors.end();it++){
 		int degree=this->net->getDegree(*it);//Note to self: degree is never gonna be 0, because it is already a common neighbor

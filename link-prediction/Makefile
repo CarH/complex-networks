@@ -43,6 +43,9 @@ test:
 	#######################################
 	# Executing Test 3: GPlus dataset
 	@./prog dataset/gplus.links
+	#######################################
+	# Executing Test 4: Test dataset
+	@./prog dataset/test.links
 
 clean:
 	rm -rf libraries/ *.o prog
