@@ -69,3 +69,33 @@ Graph Graph::removeVerticesLowDegree(int d){
 	resultingGraph.numEdges = resultingGraph.getEdgesQnt();
 	return resultingGraph;
 }
+
+Graph Graph::getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved){
+	Graph sampleGraph;
+	vector<pair<int,int> > remainingEdges;
+	int numberOfEdgesToRemove = ceil(((double)this->getEdgesQnt())*(1.0-percentage));
+	
+	edgesRemoved.clear();
+	for(set<int>::iterator it=this->vertices.begin();it!=this->vertices.end();it++){
+		int u= *it;
+		sampleGraph.createVertex(u);
+		for(set<int>::iterator it2=this->adjList[u].begin();it2!=this->adjList[u].end();it2++){
+			int v=*it2;
+			if(v>u){
+				remainingEdges.push_back(make_pair(u,v));
+			}
+		}
+	}
+	for(int i=0;i<numberOfEdgesToRemove;i++){
+		int p = rand() % remainingEdges.size();
+		edgesRemoved.insert(remainingEdges[p]);
+		remainingEdges.erase(remainingEdges.begin()+p);
+	}
+	for(vector<pair<int,int> >::iterator it = remainingEdges.begin();it!=remainingEdges.end();it++){
+		sampleGraph.connectu(it->first,it->second);
+	}
+	return sampleGraph;
+}
+void Graph::createVertex(int u){
+	this->vertices.insert(u);
+}

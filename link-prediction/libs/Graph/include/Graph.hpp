@@ -4,6 +4,8 @@
 	// Dependencies
 	#include <vector>
 	#include <set> 
+	#include <cstdlib>
+	#include <cmath>
 	
 	const int N = 20000;
 	class Graph {
@@ -30,6 +32,7 @@
 			void connectu(int u, int v);
 			int getDegree(int u);
 			double getDensity();
+			void createVertex(int u);
 			double getAvgDegree();
 			std::set<int> getAdjList(int u);
 			std::set<int> getVertices();
@@ -43,6 +46,9 @@
 			
 			int getVerticesQnt();
 			int getEdgesQnt();
+
+
+			Graph getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved);
 
 	};
 #endif

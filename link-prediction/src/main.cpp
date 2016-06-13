@@ -13,8 +13,10 @@ int main(int argc, char const *argv[])
 	string inFileName;
 	Graph origNet;
 	Graph preProcessNetLowDegree;
+	Graph trainingGraph;
 	ComplexNetwork *compNet;
 	ComplexNetwork *compNetPreProc;
+	ComplexNetwork *trainingNet;
 	int u, v;
 
 	inFileName = argv[1];
@@ -51,9 +53,27 @@ int main(int argc, char const *argv[])
 		cerr<<"Adamic-Adar (2090,2025): "<<compNetPreProc->adamicAdarCoefficient(2090,2025)<<endl;
 		cerr<<"Local Clust.(2290) = " << compNetPreProc->localClusteringCoefficient(2290)<<endl;
 		cerr<<"Global Clust.() = " << compNetPreProc->globalClusteringCoefficient()<<endl;
+
+		set<pair<int,int> > edgesRemoved;
+		trainingGraph = origNet.getEdgeSample(0.9,edgesRemoved);
+		trainingNet = new ComplexNetwork(preProcessNetLowDegree);
+		cerr<<endl<<"====TRAINING NET===="<<endl;
+		cerr<<"#Removed Edges: "<<edgesRemoved.size()<<endl;
+		cerr<<"#Vertices: "<<trainingGraph.getVerticesQnt()<<endl;
+		cerr<<"#Edges: "<<trainingGraph.getEdgesQnt()<<endl;
+		cerr<<"Degree(2290) = " << trainingGraph.getDegree(2290)<<endl;
+		cerr<<"Density = "<<trainingGraph.getDensity()<<endl;
+		cerr<<"AVG Degree: "<<trainingGraph.getAvgDegree()<<endl;
+		cerr<<"Commmon Neighbors (2090, 2025): "<< trainingNet->CN(2090,2025)<<endl;
+		cerr<<"Adamic-Adar (2090,2025): "<<trainingNet->adamicAdarCoefficient(2090,2025)<<endl;
+		cerr<<"Local Clust.(2290) = " << trainingNet->localClusteringCoefficient(2290)<<endl;
+		cerr<<"Global Clust.() = " << trainingNet->globalClusteringCoefficient()<<endl;
+
+		cout<<endl;
 		inFile.close();
 		delete compNet;
 		delete compNetPreProc;
+		delete trainingNet;
 	}
 
 	return 0;
