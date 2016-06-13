@@ -1,4 +1,5 @@
 #include "Graph/include/Graph.hpp"
+using namespace std;
 
 Graph::Graph() {
 	this->numEdges=0;
@@ -10,10 +11,13 @@ void Graph::connect(int u, int v) {
 	this->vertices.insert(v);
 }
 void Graph::connectu(int u, int v) {
-	this->connect(u,v);
-	this->connect(v,u);
-	this->numEdges++;
+	if (!this->adjList[u].count(v) && !this->adjList[v].count(u)) {
+		this->connect(u,v);
+		this->connect(v,u);
+		this->numEdges++;
+	}
 }
+
 int Graph::getDegree(int u) {
 	return this->adjList[u].size();
 }
@@ -23,10 +27,8 @@ double Graph::getDensity() {
 }
 double Graph::getAvgDegree() {
 	int degCnt=0;
-	for (int i=0; i<N; i++) {
-		if (!(this->adjList[i].empty())) {
-			degCnt += this->adjList[i].size();
-		}
+	for (set<int>::iterator vit = this->vertices.begin(); vit != this->vertices.end(); vit++) {
+		degCnt += this->adjList[*vit].size();
 	}
 	return degCnt/(double)this->vertices.size();
 }
@@ -35,4 +37,7 @@ std::set<int> Graph::getAdjList(int u) {
 }
 std::set<int> Graph::getVertices(){
 	return this->vertices;
+}
+int Graph::getTotalVertices() {
+	return this->vertices.size();
 }

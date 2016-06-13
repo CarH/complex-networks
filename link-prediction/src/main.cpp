@@ -10,16 +10,16 @@ using namespace std;
 int main(int argc, char const *argv[])
 {
 	ifstream inFile;
-	string inFileName;
+	string inFileName, datasetName;
 	Graph origNet;
 	ComplexNetwork *compNet;
 	int u, v;
 
 	inFileName = argv[1];
+	datasetName= argv[2];
 	inFile.open(inFileName.c_str());
 	if (inFile.is_open()) {
 		while (inFile >> u >> v) {
-			// cerr << u << " -> " << v << "\n";
 			origNet.connectu(u,v);
 		}
 		compNet = new ComplexNetwork(origNet);
@@ -30,7 +30,13 @@ int main(int argc, char const *argv[])
 		cerr<<"Adamic-Adar (2090,2025): "<<compNet->adamicAdarCoefficient(2090,2025)<<endl;
 		cerr<<"Local Clust.(2290) = " << compNet->localClusteringCoefficient(2290)<<endl;
 		cerr<<"Global Clust.() = " << compNet->globalClusteringCoefficient()<<endl;
-		// cerr<<"Common Neighbors Node(2090,2025): "
+
+
+		//Generate reports
+		compNet->printVertexDegreeList("VertexDegreeList_"+datasetName);
+		compNet->printDegreeDistribution("DegreeDistribution_"+datasetName);
+		compNet->printDegreeHistogram("DegreeHistogram_"+datasetName);
+
 		inFile.close();
 		delete compNet;
 	}

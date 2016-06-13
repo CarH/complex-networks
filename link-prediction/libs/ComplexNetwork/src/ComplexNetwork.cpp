@@ -4,6 +4,7 @@ using namespace std;
 ComplexNetwork::ComplexNetwork(Graph &g) {
 	this->net = new Graph();
 	*(this->net) = g;
+	buildDegreeVerticesMap();
 }
 ComplexNetwork::~ComplexNetwork() {
 	delete this->net;
@@ -48,6 +49,113 @@ double ComplexNetwork::jaccardCoefficient(int u, int v) {
 		return 0; /// We want to avoid create links between nodes already connected
 	return this->CN(u,v)/(double)(this->net->getAdjList(u).size() + this->net->getAdjList(v).size());
 }
+
+void ComplexNetwork::buildDegreeVerticesMap() {
+	if (this->degreeVerticesMap.empty()) {
+		set<int> vertices = this->net->getVertices();
+		for (std::set<int>::iterator vit = vertices.begin(); vit != vertices.end(); vit++) {
+			this->degreeVerticesMap[this->net->getDegree(*vit)].push_back(*vit);
+		}
+	}
+}
+
+std::map<int, int> ComplexNetwork::getDegreeHistogram() {
+	std::map<int, int> degreeHistogram;
+	if (!this->degreeVerticesMap.empty()) {
+		for (std::map<int, std::vector<int> >::iterator it=this->degreeVerticesMap.begin(); it != this->degreeVerticesMap.end(); it++) {
+			degreeHistogram[it->first] = it->second.size();
+		}
+	}
+	return degreeHistogram;
+}
+
+std::map<int, float> ComplexNetwork::getDegreeDistribution() {
+	map<int, float> degreeDist;
+	if (!this->degreeVerticesMap.empty()) {
+		for (std::map<int, std::vector<int> >::iterator it=this->degreeVerticesMap.begin(); it != this->degreeVerticesMap.end(); it++) {
+			degreeDist[it->first] = it->second.size()/(float)this->net->getTotalVertices();
+		}
+	}
+	return degreeDist;
+}
+
+std::map<int, int> ComplexNetwork::getVertexDegreeList() {
+	std::map<int, int> vertexDegreeList;
+	if (!this->degreeVerticesMap.empty()) {
+		set<int> vertices = this->net->getVertices();
+		for (std::set<int>::iterator vit = vertices.begin(); vit != vertices.end(); vit++) {
+			vertexDegreeList[*vit] = this->net->getDegree(*vit);
+		}
+	}
+	return vertexDegreeList;
+}
+
+void ComplexNetwork::printVertexDegreeList() {
+	map<int, int> list = getVertexDegreeList();
+	for (map<int, int>::iterator it = list.begin(); it != list.end(); it++)
+		cout << it->first << " " << it->second << "\n";
+}
+
+void ComplexNetwork::printVertexDegreeList(std::string filename, std::string suffix) {
+	ofstream outFile;
+	string outFilename = filename + "." + suffix;
+	map<int, int> list = getVertexDegreeList();
+
+	outFile.open(outFilename.c_str());
+	if (outFile.is_open()) {
+		for (map<int, int>::iterator it = list.begin(); it != list.end(); it++)
+			outFile << it->first << " " << it->second << "\n";
+		outFile.close();
+	}
+	else {
+		cerr << "ERROR: Output File could not be created: " << outFilename << "\n";
+	}
+}
+
+void ComplexNetwork::printDegreeDistribution() {
+	map<int, float> list = getDegreeDistribution();
+	for (map<int, float>::iterator it = list.begin(); it != list.end(); it++)
+		cout << it->first << " " << it->second << "\n";
+}
+
+void ComplexNetwork::printDegreeDistribution(std::string filename, std::string suffix) {
+	ofstream outFile;
+	map<int, float> list = getDegreeDistribution();
+	string outFilename = filename + "." + suffix;
+
+	outFile.open(outFilename.c_str());
+	if (outFile.is_open()) {
+		for (map<int, float>::iterator it = list.begin(); it != list.end(); it++)
+			outFile << it->first << " " << it->second << "\n";
+		outFile.close();
+	}
+	else {
+		cerr << "ERROR: Output File could not be created: " << outFilename << "\n";
+	}
+}
+
+void ComplexNetwork::printDegreeHistogram() {
+	map<int, int> list = getDegreeHistogram();
+	for (map<int, int>::iterator it = list.begin(); it != list.end(); it++)
+		cout << it->first << " " << it->second << "\n";
+}
+
+void ComplexNetwork::printDegreeHistogram(std::string filename, std::string suffix) {
+	ofstream outFile;
+	map<int, int> list = getDegreeHistogram();
+	string outFilename = filename + "." + suffix;
+
+	outFile.open(outFilename.c_str());
+	if (outFile.is_open()) {
+		for (map<int, int>::iterator it = list.begin(); it != list.end(); it++)
+			outFile << it->first << " " << it->second << "\n";
+		outFile.close();
+	}
+	else {
+		cerr << "ERROR: Output File could not be created: " << outFilename << "\n";
+	}
+}
+
 
 double ComplexNetwork::adamicAdarCoefficient(int u, int v){
 	std::set<int> commonNeighbors = this->CN_Nodes(u,v);

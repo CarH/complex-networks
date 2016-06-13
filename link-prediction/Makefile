@@ -1,7 +1,4 @@
 LIBS_PATH=libs
-LIBS=Graph ComplexNetwork
-INCLUDE_PATH=libs/Graph/include/ libs/ComplexNetwork/include/
-
 
 INCLUDE_GRAPH_PATH=libs/Graph/include
 SRC_GRAPH_PATH=libs/Graph/src/Graph.cpp
@@ -34,19 +31,22 @@ main.o: Graph.o ComplexNetwork.o
 test:
 	#######################################
 	# Executing Test 1: Facebook dataset
-	@./prog dataset/facebook.links
-
+	@./prog dataset/facebook.links facebook
+	@echo
 	#######################################
 	# Executing Test 2: Foursquare dataset
-	@./prog dataset/foursquare.links
-
+	@./prog dataset/foursquare.links foursquare
+	@echo
 	#######################################
 	# Executing Test 3: GPlus dataset
-	@./prog dataset/gplus.links
+	@./prog dataset/gplus.links gplus
+	@echo
 	#######################################
 	# Executing Test 4: Test dataset
-	@./prog dataset/test.links
+	@./prog dataset/test.links test_
 
+	@mkdir reports
+	@mv *.out ./reports
 clean:
-	rm -rf libraries/ *.o prog
+	rm -rf libraries/ *.o prog reports/
 

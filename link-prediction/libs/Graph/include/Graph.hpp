@@ -1,5 +1,5 @@
-#ifndef __GRAPH_H__
-#define __GRAPH_H__
+#ifndef __GRAPH_HPP__
+#define __GRAPH_HPP__
 	
 	// Dependencies
 	#include <vector>
@@ -29,6 +29,7 @@
 			 */
 			void connectu(int u, int v);
 			int getDegree(int u);
+			int getTotalVertices();
 			double getDensity();
 			double getAvgDegree();
 			std::set<int> getAdjList(int u);
