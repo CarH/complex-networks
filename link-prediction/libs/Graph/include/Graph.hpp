@@ -4,6 +4,8 @@
 	// Dependencies
 	#include <vector>
 	#include <set> 
+	#include <cstdlib>
+	#include <cmath>
 	
 	const int N = 20000;
 	class Graph {
@@ -31,8 +33,23 @@
 			int getDegree(int u);
 			int getTotalVertices();
 			double getDensity();
+			void createVertex(int u);
 			double getAvgDegree();
 			std::set<int> getAdjList(int u);
 			std::set<int> getVertices();
+
+			/**
+			 * Remove Verticer with degree lower or equal than d
+			 * @param  d degree
+			 * @return   The new graph without the vertices with degree lower or equal than d
+			 */
+			Graph removeVerticesLowDegree(int d=0);
+			
+			int getVerticesQnt();
+			int getEdgesQnt();
+
+
+			Graph getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved);
+
 	};
 #endif
