@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
 		cerr<<"Global Clust.() = " << compNet->globalClusteringCoefficient()<<endl;
 		// cerr<<"Common Neighbors Node(2090,2025): "
 		
-		preProcessNetLowDegree = origNet.removeVerticesLowDegree(2);
+		preProcessNetLowDegree = origNet.removeVerticesLowDegree(1);
 		compNetPreProc = new ComplexNetwork(preProcessNetLowDegree);
 		cerr<<endl<<"====PREPROC NET===="<<endl;
 		cerr<<"#Vertices: "<<preProcessNetLowDegree.getVerticesQnt()<<endl;
@@ -56,7 +56,7 @@ int main(int argc, char const *argv[])
 
 		set<pair<int,int> > edgesRemoved;
 		trainingGraph = origNet.getEdgeSample(0.9,edgesRemoved);
-		trainingNet = new ComplexNetwork(preProcessNetLowDegree);
+		trainingNet = new ComplexNetwork(trainingGraph);
 		cerr<<endl<<"====TRAINING NET===="<<endl;
 		cerr<<"#Removed Edges: "<<edgesRemoved.size()<<endl;
 		cerr<<"#Vertices: "<<trainingGraph.getVerticesQnt()<<endl;
@@ -69,6 +69,8 @@ int main(int argc, char const *argv[])
 		cerr<<"Local Clust.(2290) = " << trainingNet->localClusteringCoefficient(2290)<<endl;
 		cerr<<"Global Clust.() = " << trainingNet->globalClusteringCoefficient()<<endl;
 
+		// trainingNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,1000);
+		// trainingNet->linkPrediction(PREDICTOR_CN,edgesRemoved,10);
 		cout<<endl;
 		inFile.close();
 		delete compNet;
