@@ -6,8 +6,16 @@
 	#include <set> 
 	#include <cstdlib>
 	#include <cmath>
+	#include <algorithm>
 	
 	const int N = 20000;
+	class ComparisonDegree{
+		public:
+			bool operator() (const std::pair<int,int> &lhs,const std::pair<int,int> &rhs){
+				return lhs.second > rhs.second;
+			}
+	};
+
 	class Graph {
 		private:
 			int v;
@@ -44,6 +52,8 @@
 			 * @return   The new graph without the vertices with degree lower or equal than d
 			 */
 			Graph removeVerticesLowDegree(int d=0);
+
+			Graph removeEdgesFromHighDegreeVertices(int numEdges=1,int topNDegrees=3);
 			
 			int getVerticesQnt();
 			int getEdgesQnt();

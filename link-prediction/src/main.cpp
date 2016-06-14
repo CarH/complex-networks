@@ -49,7 +49,8 @@ int main(int argc, char const *argv[])
 		
 		// cerr<<"Common Neighbors Node(2090,2025): "
 		
-		preProcessNetLowDegree = origNet.removeVerticesLowDegree(1);
+		// preProcessNetLowDegree = origNet.removeVerticesLowDegree(1);
+		preProcessNetLowDegree = origNet.removeEdgesFromHighDegreeVertices(10,5);
 		compNetPreProc = new ComplexNetwork(preProcessNetLowDegree);
 		cerr<<endl<<"====PREPROC NET===="<<endl;
 		cerr<<"#Vertices: "<<preProcessNetLowDegree.getVerticesQnt()<<endl;
@@ -77,7 +78,7 @@ int main(int argc, char const *argv[])
 		cerr<<"Local Clust.(2290) = " << trainingNet->localClusteringCoefficient(2290)<<endl;
 		cerr<<"Global Clust.() = " << trainingNet->globalClusteringCoefficient()<<endl;
 
-		// trainingNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,1000);
+		// trainingNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,100);
 		// trainingNet->linkPrediction(PREDICTOR_CN,edgesRemoved,10);
 		cout<<endl;
 

@@ -77,6 +77,34 @@ Graph Graph::removeVerticesLowDegree(int d){
 	return resultingGraph;
 }
 
+Graph Graph::removeEdgesFromHighDegreeVertices(int numEdges,int topNDegrees){
+	
+	vector<pair<int,int> > degrees;
+
+	for(set<int>::iterator it=this->vertices.begin();it!=this->vertices.end();it++){
+		degrees.push_back(make_pair(*it,this->getDegree(*it)));
+	}
+	sort(degrees.begin(),degrees.end(),ComparisonDegree());
+	Graph resultingGraph = *(this);
+	int n=0;
+	
+
+	for(vector<pair<int,int> >::iterator it=degrees.begin();it!=degrees.end() && n<topNDegrees;it++,n++){
+		int u = it->first;
+		for(int i=0;i<numEdges && resultingGraph.adjList[u].size()>0;i++){
+			int edgeToRemoveIndex = rand()%resultingGraph.adjList[u].size();
+			// resultingGraph.adjList[u].erase(resultingGraph.adjList[u].begin()+edgeToRemoveIndex);
+			set<int>::iterator pointerToItemToBeRemoved = resultingGraph.adjList[u].begin();
+			for(int k=0;k<edgeToRemoveIndex;k++){
+				pointerToItemToBeRemoved++;
+			}
+			resultingGraph.adjList[u].erase(pointerToItemToBeRemoved);
+		}
+	}
+	resultingGraph.numEdges = resultingGraph.getEdgesQnt();
+	return resultingGraph;
+}
+
 Graph Graph::getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved){
 	Graph sampleGraph;
 	vector<pair<int,int> > remainingEdges;
@@ -106,3 +134,4 @@ Graph Graph::getEdgeSample(double percentage,std::set<std::pair<int,int> > &edge
 void Graph::createVertex(int u){
 	this->vertices.insert(u);
 }
+

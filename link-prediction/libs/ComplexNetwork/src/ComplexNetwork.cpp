@@ -288,4 +288,6 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 		}
 	}
 	cerr<<"\t\tCorrect :"<<counterCorrectM <<" out of "<<K<<endl;
+	double percentage = counterCorrectM*1.0/edgesToCheck.size();
+	cerr<<"\t\tCorrect :"<<counterCorrectM <<" out of "<<edgesToCheck.size()<<": "<<percentage<<endl;
 }
