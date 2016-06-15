@@ -156,5 +156,9 @@
 			void printDegreeHistogram();
 
 			void printDegreeHistogram(std::string filename, std::string suffix=std::string("out"));
+			
+			void printLocalClustHistogram();
+
+			void printLocalClustHistogram(std::string filename, std::string suffix=std::string("out"));
 	};
 #endif

@@ -315,3 +315,30 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 	double percentage = counterCorrectM*1.0/edgesToCheck.size();
 	cerr<<"\t\tCorrect :"<<counterCorrectM <<" out of "<<edgesToCheck.size()<<": "<<percentage<<endl;
 }
+
+void ComplexNetwork::printLocalClustHistogram(){
+	this->buildlocalClusteringCoeffMap();
+	for (map<double,vector<int> >::iterator it = this->localClusteringCoeffMap.begin(); 
+			it != this->localClusteringCoeffMap.end(); 
+			it++)
+		cout << it->first << " " << it->second.size() << "\n";
+}
+
+void ComplexNetwork::printLocalClustHistogram(std::string filename, std::string suffix){
+	this->buildlocalClusteringCoeffMap();
+	ofstream outFile;
+	string outFilename = filename + "." + suffix;
+
+	outFile.open(outFilename.c_str());
+	if (outFile.is_open()) {
+		for (map<double,vector<int> >::iterator it = this->localClusteringCoeffMap.begin();
+			it != this->localClusteringCoeffMap.end();
+			it++
+		)
+			outFile << it->first << " " << it->second.size() << "\n";
+		outFile.close();
+	}
+	else {
+		cerr << "ERROR: Output File could not be created: " << outFilename << "\n";
+	}
+}

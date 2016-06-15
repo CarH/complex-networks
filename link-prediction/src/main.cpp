@@ -45,6 +45,7 @@ int main(int argc, char const *argv[])
 		compNet->printVertexDegreeList("VertexDegreeList_"+datasetName);
 		compNet->printDegreeDistribution("DegreeDistribution_"+datasetName);
 		compNet->printDegreeHistogram("DegreeHistogram_"+datasetName);
+		compNet->printLocalClustHistogram("LocalClustHistogram_"+datasetName);
 
 		
 		// cout<<"Common Neighbors Node(2090,2025): "
