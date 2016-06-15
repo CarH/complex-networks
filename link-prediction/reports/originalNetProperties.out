@@ -1,0 +1,39 @@
+#######################################
+# Executing Test 1: Facebook dataset
+====ORIGINAL NET====
+#Vertices: 747
+#Edges: 30025
+AVG Degree: 80.3882
+Density = 0.107759
+Global Clust() = 0.700021
+
+
+#######################################
+# Executing Test 2: Foursquare dataset
+====ORIGINAL NET====
+#Vertices: 9985
+#Edges: 47164
+AVG Degree: 9.44697
+Density = 0.000946211
+Global Clust() = 0.0182391
+
+
+#######################################
+# Executing Test 3: GPlus dataset
+====ORIGINAL NET====
+#Vertices: 5178
+#Edges: 8032
+AVG Degree: 3.10236
+Density = 0.000599258
+Global Clust() = 0.169467
+
+
+#######################################
+# Executing Test 4: Test dataset
+====ORIGINAL NET====
+#Vertices: 4
+#Edges: 4
+AVG Degree: 2
+Density = 0.666667
+Global Clust() = 0.6
+

@@ -52,7 +52,7 @@ test:
 	# Executing Test 4: Test dataset
 	@./prog dataset/test.links test_
 
-	@mkdir reports
+	@mkdir -p reports
 	@mv *.out ./reports
 genSamples:
 	#######################################
@@ -69,5 +69,5 @@ genSamples:
 	
 	@mv *.links ./generatedDatasets
 clean:
-	rm -rf libraries/ *.o prog generateSamples reports/
+	rm -rf libraries/ *.o prog generateSamples 
 

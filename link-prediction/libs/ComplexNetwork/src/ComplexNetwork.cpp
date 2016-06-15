@@ -260,6 +260,8 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 	pair<int,int> p1;
 	pair<int,int> p2;	
 	ComparisonPredictors comp;
+	//Precision  = true Positive / Total Positive
+	//accuracy = true positive + true negative / total population
 	comp = ComparisonPredictors();
 	switch (predictor){
 		case PREDICTOR_ADAMIC_ADAR:
