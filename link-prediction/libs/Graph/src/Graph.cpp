@@ -135,3 +135,23 @@ void Graph::createVertex(int u){
 	this->vertices.insert(u);
 }
 
+
+void Graph::writeToFile(string fileName){
+	fstream file;
+
+	file.open(fileName.c_str(),fstream::out);
+	if(file.is_open()) {
+		for(set<int>::iterator it=this->vertices.begin();it!=this->vertices.end();it++){
+			int u= *it;
+			for(set<int>::iterator it2=this->adjList[u].begin();it2!=this->adjList[u].end();it2++){
+				int v=*it2;
+				if(v>u){
+					file<<u<<"\t"<<v<<endl;
+				}
+			}
+		}
+		file.close();
+	}else{
+		cerr<<"ERROR: Could not open file for writting: "<<fileName<<endl;
+	}
+}

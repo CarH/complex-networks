@@ -51,6 +51,7 @@ int main(int argc, char const *argv[])
 		
 		// preProcessNetLowDegree = origNet.removeVerticesLowDegree(1);
 		preProcessNetLowDegree = origNet.removeEdgesFromHighDegreeVertices(10,5);
+		// preProcessNetLowDegree.writeToFile(datasetName+"_PreProc.links");
 		compNetPreProc = new ComplexNetwork(preProcessNetLowDegree);
 		cerr<<endl<<"====PREPROC NET===="<<endl;
 		cerr<<"#Vertices: "<<preProcessNetLowDegree.getVerticesQnt()<<endl;
@@ -65,6 +66,7 @@ int main(int argc, char const *argv[])
 
 		set<pair<int,int> > edgesRemoved;
 		trainingGraph = origNet.getEdgeSample(0.9,edgesRemoved);
+		// trainingGraph.writeToFile(datasetName+"_TrainingSample.links");
 		trainingNet = new ComplexNetwork(trainingGraph);
 		cerr<<endl<<"====TRAINING NET===="<<endl;
 		cerr<<"#Removed Edges: "<<edgesRemoved.size()<<endl;

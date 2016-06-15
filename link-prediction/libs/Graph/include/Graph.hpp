@@ -7,6 +7,9 @@
 	#include <cstdlib>
 	#include <cmath>
 	#include <algorithm>
+	#include <fstream>
+	#include <string>
+	#include <iostream>
 	
 	const int N = 20000;
 	class ComparisonDegree{
@@ -60,6 +63,8 @@
 
 
 			Graph getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved);
+
+			void writeToFile(std::string fileName);
 
 	};
 #endif

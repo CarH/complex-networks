@@ -7,14 +7,18 @@ SRC_COMPLEX_NET_PATH=libs/ComplexNetwork/src/ComplexNetwork.cpp
 LIBRARIES_PATH=libraries/
 CC=g++
 CFLAGS=-c -Wall -g
+NSAMPLES = 10
 
-all: clean mkdirLibraries compile
+all: clean mkdirGeneratedDatasets mkdirLibraries compile
 
+mkdirGeneratedDatasets:
+	mkdir -p generatedDatasets
 mkdirLibraries:
 	mkdir libraries
 
-compile: main.o
-	$(CC) $(LIBRARIES_PATH)*.o -o prog
+compile: main.o generateSamples.o
+	$(CC) $(LIBRARIES_PATH)main.o $(LIBRARIES_PATH)Graph.o $(LIBRARIES_PATH)ComplexNetwork.o -o prog
+	$(CC) $(LIBRARIES_PATH)generateSamples.o $(LIBRARIES_PATH)Graph.o -o generateSamples
 
 Graph.o:
 	$(CC) $(CFLAGS) -I./$(LIBS_PATH) $(SRC_GRAPH_PATH)
@@ -28,6 +32,9 @@ main.o: Graph.o ComplexNetwork.o
 	$(CC) $(CFLAGS) -I./$(INCLUDE_GRAPH_PATH) -I./$(INCLUDE_COMPLEX_NET_PATH) src/main.cpp
 	mv *.o libraries/
 
+generateSamples.o: Graph.o
+	$(CC) $(CFLAGS) -I./$(INCLUDE_GRAPH_PATH) -I./$(INCLUDE_COMPLEX_NET_PATH) src/generateSamples.cpp
+	mv *.o libraries/
 test:
 	#######################################
 	# Executing Test 1: Facebook dataset
@@ -47,6 +54,20 @@ test:
 
 	@mkdir reports
 	@mv *.out ./reports
+genSamples:
+	#######################################
+	# Generating Samples for Facebook dataset
+	@./generateSamples dataset/facebook.links facebook $(NSAMPLES)
+	@echo
+	#######################################
+	# Generating Samples for Foursquare dataset
+	@./generateSamples dataset/foursquare.links foursquare $(NSAMPLES)
+	@echo
+	#######################################
+	# Generating Samples for GPlus dataset
+	@./generateSamples dataset/gplus.links gplus $(NSAMPLES)
+	
+	@mv *.links ./generatedDatasets
 clean:
-	rm -rf libraries/ *.o prog reports/
+	rm -rf libraries/ *.o prog generateSamples reports/
 

@@ -234,8 +234,7 @@ std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::adamicAdarAll
 				result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->adamicAdarCoefficient(u,v)));
 			}
 			
-		}
-		
+		}	
 	}
 	return result;
 }
