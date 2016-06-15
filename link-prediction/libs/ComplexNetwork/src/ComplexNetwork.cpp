@@ -5,6 +5,7 @@ ComplexNetwork::ComplexNetwork(Graph &g) : triangles(N,-1),tripplets(N,-1){
 	this->net = new Graph();
 	*(this->net) = g;
 	buildDegreeVerticesMap();
+	buildlocalClusteringCoeffPerNode();
 }
 ComplexNetwork::~ComplexNetwork() {
 	delete this->net;
@@ -211,6 +212,28 @@ double ComplexNetwork::localClusteringCoefficient(int u){
 	int tripplets = this->getTrippletsNumber(u);
 	return (tripplets!=0) ? ((double)triangles)/((double) tripplets):0;
 }
+
+void ComplexNetwork::buildlocalClusteringCoeffPerNode(){
+	if(this->localClusteringCoeffPerNode.empty()){
+		cerr<<"Building Local Clustering Coeff Per Node Map"<<endl;
+		set<int> vertices = this->net->getVertices();
+		for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
+			this->localClusteringCoeffPerNode[*it]=this->localClusteringCoefficient(*it);
+		}
+	}else{
+		cerr<<"Map already calculated"<<endl;
+	}
+}
+void ComplexNetwork::buildlocalClusteringCoeffMap(){
+	if (this->localClusteringCoeffMap.empty()){
+		this->buildlocalClusteringCoeffPerNode();
+		set<int> vertices = this->net->getVertices();
+		for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
+			this->localClusteringCoeffMap[this->localClusteringCoeffPerNode[*it]].push_back(*it);
+		}
+	}	
+}
+
 double ComplexNetwork::globalClusteringCoefficient(){
 	
 	double localTriangles=0;

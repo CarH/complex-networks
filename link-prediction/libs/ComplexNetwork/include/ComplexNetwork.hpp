@@ -36,7 +36,12 @@
 			std::vector<double> triangles;
 			std::vector<double> tripplets;
 			std::map<int, std::vector<int> > degreeVerticesMap;
+			std::map<int, double > localClusteringCoeffPerNode;
+			std::map<double,std::vector<int> > localClusteringCoeffMap;
+
 			void buildDegreeVerticesMap();
+			void buildlocalClusteringCoeffPerNode();
+			void buildlocalClusteringCoeffMap();
 			// std::map<std::pair<int,int>,double> adamicAdar;//adamicAdar is alwyas >=0
 			
 		public:
