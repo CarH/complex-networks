@@ -46,16 +46,16 @@ preProc.o: Graph.o
 test:
 	#######################################
 	# Executing Test 1: Facebook dataset
-	# @./prog dataset/facebook.links facebook
-	# @echo
+	@./prog dataset/facebook.links facebook
+	@echo
 	#######################################
 	# Executing Test 2: Foursquare dataset
-	# @./prog dataset/foursquare.links foursquare
-	# @echo
+	@./prog dataset/foursquare.links foursquare
+	@echo
 	#######################################
 	# Executing Test 3: GPlus dataset
-	# @./prog dataset/gplus.links gplus
-	# @echo
+	@./prog dataset/gplus.links gplus
+	@echo
 	#######################################
 	# Executing Test 4: Test dataset
 	# @./prog dataset/test.links test_
