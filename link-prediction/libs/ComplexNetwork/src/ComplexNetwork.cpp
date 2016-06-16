@@ -246,7 +246,11 @@ double ComplexNetwork::globalClusteringCoefficient(){
 	}
 	return localTriangles/localTripplets;
 }
-std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::adamicAdarAll(){
+
+std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::jaccardAll(){
+	if(this->jaccardCoeffBuffer.size()>0){
+		return this->jaccardCoeffBuffer;
+	}
 	vector<pair<pair<int,int>,double> > result;
 	set<int> vertices = this->net->getVertices();
 	for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
@@ -254,7 +258,30 @@ std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::adamicAdarAll
 		for(set<int>::iterator it2 = vertices.begin();it2!=vertices.end();it2++){
 			int v=*it2;
 			if(u>v){
-				result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->adamicAdarCoefficient(u,v)));
+				if(this->net->getAdjList(u).count(v)==0){
+					result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->jaccardCoefficient(u,v)));
+				}
+			}
+			
+		}	
+	}
+
+	return result;
+}
+std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::adamicAdarAll(){
+	if(this->adamicAdarCoeffBuffer.size()>0){
+		return this->adamicAdarCoeffBuffer;
+	}
+	vector<pair<pair<int,int>,double> > result;
+	set<int> vertices = this->net->getVertices();
+	for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
+		int u=*it;
+		for(set<int>::iterator it2 = vertices.begin();it2!=vertices.end();it2++){
+			int v=*it2;
+			if(u>v){
+				if(this->net->getAdjList(u).count(v)==0){
+					result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->adamicAdarCoefficient(u,v)));
+				}
 			}
 			
 		}	
@@ -262,6 +289,9 @@ std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::adamicAdarAll
 	return result;
 }
 std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::CNAll(){
+	if(this->CNCoeffBuffer.size()>0){
+		return this->CNCoeffBuffer;
+	}
 	vector<pair<pair<int,int>,double> > result;
 	set<int> vertices = this->net->getVertices();
 	for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
@@ -269,9 +299,10 @@ std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::CNAll(){
 		for(set<int>::iterator it2 = vertices.begin();it2!=vertices.end();it2++){
 			int v=*it2;
 			if(u>v){
-				result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->CN(u,v)));
+				if(this->net->getAdjList(u).count(v)==0){
+					result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->CN(u,v)));
+				}
 			}
-			
 		}
 		
 	}
@@ -287,6 +318,10 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 	//accuracy = true positive + true negative / total population
 	comp = ComparisonPredictors();
 	switch (predictor){
+		case PREDICTOR_JACCARD:
+			cerr<<"Running Jaccard for All Pairs"<<endl;
+			coefficients  = this->jaccardAll();
+			break;
 		case PREDICTOR_ADAMIC_ADAR:
 			cerr<<"Running Adamic Adar for All Pairs"<<endl;
 			coefficients  = this->adamicAdarAll();
@@ -295,7 +330,7 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 		case PREDICTOR_CN:
 			cerr<<"Running CN for All Pairs"<<endl;
 			coefficients  = this->CNAll();
-			cerr<<"AdamicAdarOrdenado:"<<endl;
+			cerr<<"CN Ordenado:"<<endl;
 			break;
 		default:
 			cerr<<"Invalid Predictor"<<endl;
@@ -303,6 +338,24 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 			break;
 	}
 	sort(coefficients.begin(),coefficients.end(),comp);
+	switch (predictor){
+		case PREDICTOR_JACCARD:
+			this->jaccardCoeffBuffer.insert(this->jaccardCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+			break;
+		case PREDICTOR_ADAMIC_ADAR:
+			this->adamicAdarCoeffBuffer.insert(this->adamicAdarCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+			break;
+		case PREDICTOR_CN:
+			this->CNCoeffBuffer.insert(this->CNCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+			break;
+		default:
+			cerr<<"Invalid Predictor"<<endl;
+			return;
+			break;
+	}
+	
+
+
 	for(int i=0;i<K;i++){
 		p1=coefficients[i].first;
 		p2 = pair<int,int>(coefficients[i].first.second,coefficients[i].first.first);
@@ -336,6 +389,65 @@ void ComplexNetwork::printLocalClustHistogram(std::string filename, std::string 
 			it++
 		)
 			outFile << it->first << " " << it->second.size() << "\n";
+		outFile.close();
+	}
+	else {
+		cerr << "ERROR: Output File could not be created: " << outFilename << "\n";
+	}
+}
+void ComplexNetwork::calculatePredictorsBuffers(){
+	vector<pair<pair<int,int>,double> > coefficients;
+	pair<int,int> p1;
+	pair<int,int> p2;	
+	ComparisonPredictors comp;
+	//Precision  = true Positive / Total Positive
+	//accuracy = true positive + true negative / total population
+	comp = ComparisonPredictors();
+
+	coefficients  = this->jaccardAll();
+	sort(coefficients.begin(),coefficients.end(),comp);
+	this->jaccardCoeffBuffer.insert(this->jaccardCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+	
+
+	coefficients  = this->adamicAdarAll();
+	sort(coefficients.begin(),coefficients.end(),comp);
+	this->adamicAdarCoeffBuffer.insert(this->adamicAdarCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+
+	coefficients  = this->CNAll();
+	sort(coefficients.begin(),coefficients.end(),comp);
+	this->CNCoeffBuffer.insert(this->CNCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+
+	
+
+}
+
+void ComplexNetwork::printPredictorsBuffer(std::string filename, std::string suffix){
+	this->calculatePredictorsBuffers();
+	
+	ofstream outFile;
+	string outFilename = filename + "." + suffix;
+
+	outFile.open(outFilename.c_str());
+	if (outFile.is_open()) {
+		outFile<<"Jaccard"<<endl;
+		for (vector<pair<pair<int,int>,double> >::iterator it = this->jaccardCoeffBuffer.begin();
+			it != this->jaccardCoeffBuffer.end();
+			it++
+		)
+			outFile << it->first.first << " "<<it->first.second <<" " << it->second << "\n";
+		outFile<<"Adamic"<<endl;
+		for (vector<pair<pair<int,int>,double> >::iterator it = this->adamicAdarCoeffBuffer.begin();
+			it != this->adamicAdarCoeffBuffer.end();
+			it++
+		)
+			outFile << it->first.first << " "<<it->first.second <<" " << it->second << "\n";
+
+		outFile<<"CN"<<endl;
+		for (vector<pair<pair<int,int>,double> >::iterator it = this->CNCoeffBuffer.begin();
+			it != this->CNCoeffBuffer.end();
+			it++
+		)
+			outFile << it->first.first << " "<<it->first.second <<" " << it->second << "\n";
 		outFile.close();
 	}
 	else {

@@ -8,6 +8,7 @@ LIBRARIES_PATH=libraries/
 CC=g++
 CFLAGS=-c -Wall -g
 NSAMPLES = 10
+CONSIDER_CONN_COMP = 1
 
 all: clean mkdirGeneratedDatasets mkdirLibraries compile
 
@@ -57,15 +58,19 @@ test:
 genSamples:
 	#######################################
 	# Generating Samples for Facebook dataset
-	@./generateSamples dataset/facebook.links facebook $(NSAMPLES)
+	@./generateSamples dataset/facebook.links facebook $(NSAMPLES) $(CONSIDER_CONN_COMP)
 	@echo
 	#######################################
 	# Generating Samples for Foursquare dataset
-	@./generateSamples dataset/foursquare.links foursquare $(NSAMPLES)
+	@./generateSamples dataset/foursquare.links foursquare $(NSAMPLES) $(CONSIDER_CONN_COMP)
 	@echo
 	#######################################
 	# Generating Samples for GPlus dataset
-	@./generateSamples dataset/gplus.links gplus $(NSAMPLES)
+	@./generateSamples dataset/gplus.links gplus $(NSAMPLES) $(CONSIDER_CONN_COMP)
+
+	#######################################
+	# Generating Samples for Test dataset
+	@./generateSamples dataset/test.links test $(NSAMPLES) $(CONSIDER_CONN_COMP)
 	
 	@mv *.links ./generatedDatasets
 clean:

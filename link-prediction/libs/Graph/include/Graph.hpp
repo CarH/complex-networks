@@ -10,7 +10,13 @@
 	#include <fstream>
 	#include <string>
 	#include <iostream>
+	#include <bitset>
+	#include <queue>
+	#include <ctime>
 	
+	#define VISIT false
+	#define NOT_VISIT true
+
 	const int N = 20000;
 	class ComparisonDegree{
 		public:
@@ -25,6 +31,14 @@
 			int numEdges;
 			std::set<int> vertices; // Segestoes sao bem vindas aqui
 			std::set<int> adjList[N];
+			std::bitset<N> visited;
+
+			void resetVisited();
+			void bfs(int src);
+			bool removeEdgeu(int u,int v);
+			bool removeEdge(int u,int v);
+			bool wasAllVisited();
+			int getUnvisitedVertex();
 		public:
 			Graph();
 			~Graph();
@@ -62,9 +76,11 @@
 			int getEdgesQnt();
 
 
-			Graph getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved);
+			Graph getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved,bool considerConnecComponents=true);
 
 			void writeToFile(std::string fileName);
+
+			int getNumberOfConnectedComponents();
 
 	};
 #endif

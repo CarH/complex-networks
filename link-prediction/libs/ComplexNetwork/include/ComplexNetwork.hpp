@@ -14,8 +14,11 @@
 	#include <set>
 	#include "Graph.hpp"
 	
+	#define PREDICTOR_JACCARD 0
 	#define PREDICTOR_CN 1
 	#define PREDICTOR_ADAMIC_ADAR 2
+
+	#define MAX_TO_STORE 10000
 
 	class ComparisonPredictors{
 		public:
@@ -38,6 +41,10 @@
 			std::map<int, std::vector<int> > degreeVerticesMap;
 			std::map<int, double > localClusteringCoeffPerNode;
 			std::map<double,std::vector<int> > localClusteringCoeffMap;
+
+			std::vector<std::pair<std::pair<int,int>,double > > jaccardCoeffBuffer;
+			std::vector<std::pair<std::pair<int,int>,double > > adamicAdarCoeffBuffer;
+			std::vector<std::pair<std::pair<int,int>,double > > CNCoeffBuffer;
 
 			void buildDegreeVerticesMap();
 			void buildlocalClusteringCoeffPerNode();
@@ -70,6 +77,14 @@
 			 * @return   (# of common neighbors between u an v) / (SUM of # neighbors of u AND v)
 			 */
 			double jaccardCoefficient(int u, int v);
+
+			/**
+			 * Jaccard's Coefficient of all pairs
+			 * @return   vector containing the coefficients of all pairs
+			 */
+			
+			std::vector<std::pair<std::pair<int,int>,double> > jaccardAll();
+			
 
 			/**
 			 * Common Neighbors Nodes
@@ -160,5 +175,10 @@
 			void printLocalClustHistogram();
 
 			void printLocalClustHistogram(std::string filename, std::string suffix=std::string("out"));
+
+			void calculatePredictorsBuffers();
+
+			void printPredictorsBuffer(std::string filename, std::string suffix=std::string("out"));
+
 	};
 #endif

@@ -46,8 +46,16 @@ int main(int argc, char const *argv[])
 		compNet->printDegreeDistribution("DegreeDistribution_"+datasetName);
 		compNet->printDegreeHistogram("DegreeHistogram_"+datasetName);
 		compNet->printLocalClustHistogram("LocalClustHistogram_"+datasetName);
+		// compNet->printPredictorsBuffer("Predictors_"+datasetName);
 
-		
+		set<pair<int,int> > edgesRemoved;
+		edgesRemoved.insert(pair<int,int>(1,1));
+		// compNet->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,10);
+		// compNet->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,30);
+		// compNet->linkPrediction(PREDICTOR_CN,edgesRemoved,10);
+		// compNet->linkPrediction(PREDICTOR_CN,edgesRemoved,30);
+		// compNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,10);
+		// compNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,30);
 		// cout<<"Common Neighbors Node(2090,2025): "
 		
 		// // preProcessNetLowDegree = origNet.removeVerticesLowDegree(1);
@@ -65,7 +73,7 @@ int main(int argc, char const *argv[])
 		// cout<<"Local Clust.(2290) = " << compNetPreProc->localClusteringCoefficient(2290)<<endl;
 		// cout<<"Global Clust.() = " << compNetPreProc->globalClusteringCoefficient()<<endl;
 
-		// set<pair<int,int> > edgesRemoved;
+		
 		// trainingGraph = origNet.getEdgeSample(0.9,edgesRemoved);
 		// // trainingGraph.writeToFile(datasetName+"_TrainingSample.links");
 		// trainingNet = new ComplexNetwork(trainingGraph);
@@ -82,7 +90,7 @@ int main(int argc, char const *argv[])
 		// cout<<"Global Clust.() = " << trainingNet->globalClusteringCoefficient()<<endl;
 
 		// // trainingNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,100);
-		// // trainingNet->linkPrediction(PREDICTOR_CN,edgesRemoved,10);
+		// trainingNet->linkPrediction(PREDICTOR_CN,edgesRemoved,10);
 		cout<<endl;
 
 		inFile.close();
