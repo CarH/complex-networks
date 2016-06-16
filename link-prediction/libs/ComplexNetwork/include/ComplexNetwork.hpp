@@ -38,9 +38,11 @@
 			Graph *net;
 			std::vector<double> triangles;
 			std::vector<double> tripplets;
-			std::map<int, std::vector<int> > degreeVerticesMap;
+			std::map<int, std::set<int> > degreeVerticesMap;
 			std::map<int, double > localClusteringCoeffPerNode;
 			std::map<double,std::vector<int> > localClusteringCoeffMap;
+			std::map< std::pair<int, int>, double> EMatrix; 
+			std::map<int, double> qkMap;
 
 			std::vector<std::pair<std::pair<int,int>,double > > jaccardCoeffBuffer;
 			std::vector<std::pair<std::pair<int,int>,double > > adamicAdarCoeffBuffer;
@@ -52,6 +54,7 @@
 			void buildDegreeVerticesMap();
 			void buildlocalClusteringCoeffPerNode();
 			void buildlocalClusteringCoeffMap();
+			void buildJointProbabilityDistOfRemainingDegree();
 			// std::map<std::pair<int,int>,double> adamicAdar;//adamicAdar is alwyas >=0
 			
 		public:
@@ -163,6 +166,8 @@
 
 			std::map<int, int> getVertexDegreeList();
 
+			void printJointProbability();
+
 			void printVertexDegreeList();
 
 			void printVertexDegreeList(std::string filename, std::string suffix=std::string("out"));
@@ -174,6 +179,14 @@
 			void printDegreeHistogram();
 
 			void printDegreeHistogram(std::string filename, std::string suffix=std::string("out"));
+
+			void computeQK();
+			
+			void printQKs();
+
+			double computeVariance();
+
+			double computeAssortativity();
 			
 			void printLocalClustHistogram();
 

@@ -78,6 +78,9 @@ int main(int argc, char const *argv[])
 		cout<<"Global Clust() = " << compNet->globalClusteringCoefficient()<<endl;
 		cerr<<"#Connected Components "<< origNet.getNumberOfConnectedComponents()<<endl;
 
+		cout<<"Assortativity: "<<compNet->computeAssortativity()<<endl;
+
+		
 		compNet->calculatePredictorsBuffers();
 		// Generate reports to original network
 		compNet->printVertexDegreeList("VertexDegreeList_"+datasetName);

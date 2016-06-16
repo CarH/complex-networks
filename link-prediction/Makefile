@@ -47,7 +47,24 @@ test:
 	#######################################
 	# Executing Test 1: Facebook dataset
 	# @./prog dataset/facebook.links facebook
+	# @echo
+	#######################################
+	# Executing Test 2: Foursquare dataset
+	# @./prog dataset/foursquare.links foursquare
+	# @echo
+	#######################################
+	# Executing Test 3: GPlus dataset
+	# @./prog dataset/gplus.links gplus
+	# @echo
+	#######################################
+	# Executing Test 4: Test dataset
+	# @./prog dataset/test.links test_
+
+	#######################################
+	# Executing Test 4: Tosco dataset
+	@./prog dataset/tosco.links tosco
 	@echo
+
 	#######################################
 	# Executing Test 2: Foursquare dataset
 	# @./prog dataset/foursquare.links foursquare
@@ -59,7 +76,8 @@ test:
 	#######################################
 	# Executing Test 4: Test dataset
 	# @./prog dataset/test.links test_
-	@./prog generatedDatasets/facebook_TrainingSample_0.links facebook_TrainingSample_0
+	# @./prog generatedDatasets/facebook_TrainingSample_0.links facebook_TrainingSample_0
+
 	@mkdir -p reports
 	@mv *.out ./reports
 genSamples:

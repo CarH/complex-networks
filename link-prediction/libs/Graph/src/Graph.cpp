@@ -4,7 +4,7 @@ using namespace std;
 using namespace std;
 Graph::Graph() {
 	this->numEdges=0;
-	
+	this->maxDegree=-INT_MAX;
 }
 Graph::~Graph() {}
 void Graph::connect(int u, int v) {
@@ -23,6 +23,14 @@ void Graph::connectu(int u, int v) {
 int Graph::getDegree(int u) {
 	return this->adjList[u].size();
 }
+
+int Graph::getMaxDegree() {
+	for (set<int>::iterator vit = this->vertices.begin(); vit != this->vertices.end(); vit++) {
+		this->maxDegree = ((int)this->adjList[*vit].size() > this->maxDegree) ? this->adjList[*vit].size() : this->maxDegree;
+	}
+	return this->maxDegree;
+}
+
 double Graph::getDensity() {
 	double numPossibleEdges = (this->vertices.size()*(this->vertices.size()-1))/2;
 	return (double) this->numEdges / numPossibleEdges;
@@ -31,6 +39,7 @@ double Graph::getAvgDegree() {
 	int degCnt=0;
 	for (set<int>::iterator vit = this->vertices.begin(); vit != this->vertices.end(); vit++) {
 		degCnt += this->adjList[*vit].size();
+		this->maxDegree = (this->adjList[*vit].size() > this->maxDegree) ? this->adjList[*vit].size() : this->maxDegree;
 	}
 	return degCnt/(double)this->vertices.size();
 }

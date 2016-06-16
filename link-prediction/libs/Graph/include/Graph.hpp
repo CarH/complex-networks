@@ -6,6 +6,7 @@
 	#include <set> 
 	#include <cstdlib>
 	#include <cmath>
+	#include <climits>
 	#include <algorithm>
 	#include <fstream>
 	#include <string>
@@ -28,6 +29,7 @@
 	class Graph {
 		private:
 			int v;
+			int maxDegree;
 			int numEdges;
 			std::set<int> vertices; // Segestoes sao bem vindas aqui
 			std::set<int> adjList[N];
@@ -79,6 +81,8 @@
 			Graph getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved,bool considerConnecComponents=true);
 
 			void writeToFile(std::string fileName);
+
+			int getMaxDegree();
 
 			int getNumberOfConnectedComponents();
 

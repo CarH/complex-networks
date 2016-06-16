@@ -64,7 +64,7 @@ void ComplexNetwork::buildDegreeVerticesMap() {
 	if (this->degreeVerticesMap.empty()) {
 		set<int> vertices = this->net->getVertices();
 		for (std::set<int>::iterator vit = vertices.begin(); vit != vertices.end(); vit++) {
-			this->degreeVerticesMap[this->net->getDegree(*vit)].push_back(*vit);
+			this->degreeVerticesMap[this->net->getDegree(*vit)].insert(*vit);
 		}
 	}
 }
@@ -72,7 +72,7 @@ void ComplexNetwork::buildDegreeVerticesMap() {
 std::map<int, int> ComplexNetwork::getDegreeHistogram() {
 	std::map<int, int> degreeHistogram;
 	if (!this->degreeVerticesMap.empty()) {
-		for (std::map<int, std::vector<int> >::iterator it=this->degreeVerticesMap.begin(); it != this->degreeVerticesMap.end(); it++) {
+		for (std::map<int, std::set<int> >::iterator it=this->degreeVerticesMap.begin(); it != this->degreeVerticesMap.end(); it++) {
 			degreeHistogram[it->first] = it->second.size();
 		}
 	}
@@ -82,7 +82,7 @@ std::map<int, int> ComplexNetwork::getDegreeHistogram() {
 std::map<int, float> ComplexNetwork::getDegreeDistribution() {
 	map<int, float> degreeDist;
 	if (!this->degreeVerticesMap.empty()) {
-		for (std::map<int, std::vector<int> >::iterator it=this->degreeVerticesMap.begin(); it != this->degreeVerticesMap.end(); it++) {
+		for (std::map<int, std::set<int> >::iterator it=this->degreeVerticesMap.begin(); it != this->degreeVerticesMap.end(); it++) {
 			degreeDist[it->first] = it->second.size()/(float)this->net->getTotalVertices();
 		}
 	}
@@ -167,6 +167,87 @@ void ComplexNetwork::printDegreeHistogram(std::string filename, std::string suff
 }
 
 
+void ComplexNetwork::computeQK() {
+	double acc=0.0;
+	int k=0;
+	for (std::map<int, std::set<int> >::iterator itI = this->degreeVerticesMap.begin(); itI != this->degreeVerticesMap.end(); itI++) {
+		k = itI->first-1;
+		acc = 0.0;
+		cout << "this->net->getMaxDegree(): " << this->net->getMaxDegree() <<endl;
+		for (int i = 0; i < this->net->getMaxDegree(); i++) {
+			if (this->EMatrix.count(make_pair(i,k))) {
+				acc += this->EMatrix[ make_pair(i,k) ];
+			}
+		}
+		cerr << "acc p/ k="<<k<<" : "<<acc<<endl;
+		this->qkMap[ k ] = acc/(double)this->net->getAvgDegree();
+	}
+}
+
+void ComplexNetwork::printQKs() {
+	cerr << "\n------------------------------\n qk values:\n";
+	for (std::map<int, double >::iterator itI = this->qkMap.begin(); itI != this->qkMap.end(); itI++) {
+		cerr << "[" << itI->first << "] : " << itI->second << "\n";
+	}
+}
+
+void ComplexNetwork::printJointProbability() {
+	for (std::map<int, std::set<int> >::iterator itI = this->degreeVerticesMap.begin(); itI != this->degreeVerticesMap.end(); itI++) {
+		for (std::map<int, std::set<int> >::iterator itJ = this->degreeVerticesMap.begin(); itJ != this->degreeVerticesMap.end(); itJ++) {
+			cerr << "E[" << itI->first-1 << "][" << itJ->first-1 << "]: " << this->EMatrix[ make_pair(itI->first - 1, itJ->first - 1) ] << "\n";
+		}
+	}
+}
+
+void ComplexNetwork::buildJointProbabilityDistOfRemainingDegree() {
+	int cnt=0;
+	for (std::map<int, std::set<int> >::iterator itI = this->degreeVerticesMap.begin(); itI != this->degreeVerticesMap.end(); itI++) {
+		for (std::map<int, std::set<int> >::iterator itJ = this->degreeVerticesMap.begin(); itJ != this->degreeVerticesMap.end(); itJ++) {
+			cnt=0;
+			for (std::set<int>::iterator veci = itI->second.begin(); veci != itI->second.end(); veci++) {
+				set<int> list = this->net->getAdjList(*veci);
+				for (set<int>::iterator adj = list.begin(); adj != list.end(); adj++) {
+					if (itJ->second.count(*adj)) {
+						cnt++;
+					}
+				}
+			}
+			this->EMatrix[ make_pair(itI->first - 1, itJ->first - 1) ] = (cnt/((double)this->net->getTotalVertices()*2.0));
+		}
+	}
+}
+
+double ComplexNetwork::computeVariance() {
+	double var=0.0;
+	for (map<int, double>::iterator it = this->qkMap.begin(); it != qkMap.end(); it++) {
+		var += (it->first) * (it->first) * it->second;
+	}
+	for (map<int, double>::iterator it = this->qkMap.begin(); it != qkMap.end(); it++) {
+		var -= (it->first * it->second) * (it->first * it->second);
+	}
+	return var;
+}
+
+
+double ComplexNetwork::computeAssortativity() {
+	double var, acc=0.0;
+	buildJointProbabilityDistOfRemainingDegree();
+	
+	//Delete
+	printJointProbability();
+
+	computeQK();
+	printQKs();
+	var = computeVariance();
+	cerr << "computeVariance: "<<var<<endl;
+	for (map<int, double>::iterator itj = qkMap.begin(); itj != qkMap.end(); itj++) {
+		for (map<int, double>::iterator itk = qkMap.begin(); itk != qkMap.end(); itk++) {
+			acc += itj->first*itk->first*(EMatrix[make_pair(itj->first, itk->first)] - (itj->second * itk->second));
+		}
+	}
+	return acc/var;
+}
+
 double ComplexNetwork::adamicAdarCoefficient(int u, int v){
 
 	std::set<int> commonNeighbors = this->CN_Nodes(u,v);
@@ -240,7 +321,7 @@ void ComplexNetwork::buildlocalClusteringCoeffMap(){
 		for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
 			this->localClusteringCoeffMap[this->localClusteringCoeffPerNode[*it]].push_back(*it);
 		}
-	}	
+	}
 }
 
 double ComplexNetwork::globalClusteringCoefficient(){
