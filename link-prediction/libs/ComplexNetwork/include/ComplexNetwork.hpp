@@ -145,7 +145,7 @@
 			 * @param edgesToCheck edges removed when building training set.
 			 * @param K  K represents that this method will compare edgesToCheck with the K top pairs
 			 */
-			void linkPrediction(int predictor,std::set<std::pair<int,int> > &edgesToCheck,int K);
+			void linkPrediction(int predictor,std::set<std::pair<int,int> > &edgesToCheck,int K,std::ostream &outFile);
 
 
 			/**
@@ -179,6 +179,8 @@
 			void calculatePredictorsBuffers();
 
 			void printPredictorsBuffer(std::string filename, std::string suffix=std::string("out"));
+
+			void runAval(std::string filename, std::set<std::pair<int,int> >edgesRemoved,std::string suffix=std::string("out"));
 
 	};
 #endif

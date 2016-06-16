@@ -89,17 +89,22 @@ Graph Graph::removeEdgesFromHighDegreeVertices(int numEdges,int topNDegrees){
 	Graph resultingGraph = *(this);
 	int n=0;
 	
-
-	for(vector<pair<int,int> >::iterator it=degrees.begin();it!=degrees.end() && n<topNDegrees;it++,n++){
+	int previousDeg=-1;
+	for(vector<pair<int,int> >::iterator it=degrees.begin();it!=degrees.end() && n<topNDegrees;it++){
 		int u = it->first;
+		int currDeg= it->second;
+		if(currDeg!=previousDeg){
+			n++;
+		}
+		previousDeg=currDeg;
 		for(int i=0;i<numEdges && resultingGraph.adjList[u].size()>0;i++){
 			int edgeToRemoveIndex = rand()%resultingGraph.adjList[u].size();
 			// resultingGraph.adjList[u].erase(resultingGraph.adjList[u].begin()+edgeToRemoveIndex);
 			set<int>::iterator pointerToItemToBeRemoved = resultingGraph.adjList[u].begin();
-			for(int k=0;k<edgeToRemoveIndex;k++){
+			for(int k=0;k<edgeToRemoveIndex;k++){//GAMBS pra funcionar o iterador
 				pointerToItemToBeRemoved++;
 			}
-			resultingGraph.adjList[u].erase(pointerToItemToBeRemoved);
+			resultingGraph.removeEdgeu(u,*pointerToItemToBeRemoved);
 		}
 	}
 	resultingGraph.numEdges = resultingGraph.getEdgesQnt();

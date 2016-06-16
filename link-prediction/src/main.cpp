@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ostream>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -55,14 +56,17 @@ int main(int argc, char const *argv[])
 		}
 		
 		//DEBUG
-		set<pair<int,int> > origEdgesInPairs = origNet.getEdgesInPairs();
-		for(set<pair<int,int> >::iterator it= edgesRemoved.begin();it!=edgesRemoved.end();it++){
-			pair<int,int> p2 = pair<int,int>(it->second,it->first);
-			if (origEdgesInPairs.count(*it)>0 || origEdgesInPairs.count(p2)>0){
-				cerr<<"ERROR: edges removed overlap"<<endl;
-				exit(EXIT_FAILURE);
-			}
-		}
+		// Graph debugTest=origNet;
+		// set<pair<int,int> > origEdgesInPairs = origNet.getEdgesInPairs();
+		// for(set<pair<int,int> >::iterator it= edgesRemoved.begin();it!=edgesRemoved.end();it++){
+		// 	pair<int,int> p2 = pair<int,int>(it->second,it->first);
+		// 	if (origEdgesInPairs.count(*it)>0 || origEdgesInPairs.count(p2)>0){
+		// 		cerr<<"ERROR: edges removed overlap"<<endl;
+		// 		exit(EXIT_FAILURE);
+		// 	}
+		// 	debugTest.connectu(it->first,it->second);
+		// }
+		// debugTest.writeToFile("debug.links");
 		//FIM DEBUG
 		compNet = new ComplexNetwork(origNet);
 		
@@ -84,32 +88,8 @@ int main(int argc, char const *argv[])
 
 		
 		//100 300 500 1000
-		cout<<"JACCARD "<<endl;
-		compNet->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,100);
-		cout<<endl;
-		compNet->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,300);
-		cout<<endl;
-		compNet->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,500);
-		cout<<endl;
-		compNet->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,1000);
-		cout<<endl;
-		cout<<"CN "<<endl;
-		compNet->linkPrediction(PREDICTOR_CN,edgesRemoved,100);
-		cout<<endl;
-		compNet->linkPrediction(PREDICTOR_CN,edgesRemoved,300);
-		cout<<endl;
-		compNet->linkPrediction(PREDICTOR_CN,edgesRemoved,500);
-		cout<<endl;
-		compNet->linkPrediction(PREDICTOR_CN,edgesRemoved,1000);
-		cout<<endl;
-		cout<<"Adamic"<<endl;
-		compNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,100);
-		cout<<endl;
-		compNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,300);
-		cout<<endl;
-		compNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,500);
-		cout<<endl;
-		compNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,1000);
+		compNet->runAval("Results_"+datasetName,edgesRemoved);
+		
 		
 		cout<<endl;
 

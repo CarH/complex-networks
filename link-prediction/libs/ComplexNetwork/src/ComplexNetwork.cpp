@@ -308,7 +308,7 @@ std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::CNAll(){
 	}
 	return result;
 }
-void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > &edgesToCheck,int K){
+void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > &edgesToCheck,int K,ostream &outFile){
 	this->calculatePredictorsBuffers();
 	vector<pair<pair<int,int>,double> > coefficients;
 	int counterCorrectM = 0;
@@ -352,11 +352,11 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 
 	double precision = counterCorrectM*1.0 / K;
 	double recall = (edgesToCheck.size()!=0)?counterCorrectM*1.0/edgesToCheck.size():0;
-	cout<<"\t\tCorrects: "<<counterCorrectM<<endl;
-	cout<<"\t\tL: "<<K<<endl;
-	cout<<"\t\tEdges Removed: "<<edgesToCheck.size()<<endl;
-	cout<<"\t\tPrecision:"<<precision<<endl;
-	cout<<"\t\tRecall :"<<recall<<endl;
+	outFile<<"\t\tCorrects: "<<counterCorrectM<<endl;
+	outFile<<"\t\tL: "<<K<<endl;
+	outFile<<"\t\tEdges Removed: "<<edgesToCheck.size()<<endl;
+	outFile<<"\t\tPrecision:"<<precision<<endl;
+	outFile<<"\t\tRecall :"<<recall<<endl;
 }
 
 void ComplexNetwork::printLocalClustHistogram(){
@@ -445,6 +445,46 @@ void ComplexNetwork::printPredictorsBuffer(std::string filename, std::string suf
 			it++
 		)
 			outFile << it->first.first << " "<<it->first.second <<" " << it->second << "\n";
+		outFile.close();
+	}
+	else {
+		cerr << "ERROR: Output File could not be created: " << outFilename << "\n";
+	}
+}
+void ComplexNetwork::runAval(std::string filename,set<pair<int,int> >edgesRemoved ,std::string suffix){
+
+	ofstream outFile;
+	string outFilename = filename + "." + suffix;
+
+	outFile.open(outFilename.c_str());
+	if (outFile.is_open()) {
+		outFile<<"Jaccard"<<endl;
+		this->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,100,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,300,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,500,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,1000,outFile);
+		outFile<<endl;
+		outFile<<"CN "<<endl;
+		this->linkPrediction(PREDICTOR_CN,edgesRemoved,100,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_CN,edgesRemoved,300,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_CN,edgesRemoved,500,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_CN,edgesRemoved,1000,outFile);
+		outFile<<endl;
+		outFile<<"Adamic"<<endl;
+		this->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,100,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,300,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,500,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,1000,outFile);
+		
 		outFile.close();
 	}
 	else {

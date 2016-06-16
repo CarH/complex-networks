@@ -1,0 +1,74 @@
+Jaccard
+		Corrects: 89
+		L: 100
+		Edges Removed: 3003
+		Precision:0.89
+		Recall :0.029637
+
+		Corrects: 264
+		L: 300
+		Edges Removed: 3003
+		Precision:0.88
+		Recall :0.0879121
+
+		Corrects: 406
+		L: 500
+		Edges Removed: 3003
+		Precision:0.812
+		Recall :0.135198
+
+		Corrects: 716
+		L: 1000
+		Edges Removed: 3003
+		Precision:0.716
+		Recall :0.238428
+
+CN 
+		Corrects: 94
+		L: 100
+		Edges Removed: 3003
+		Precision:0.94
+		Recall :0.031302
+
+		Corrects: 273
+		L: 300
+		Edges Removed: 3003
+		Precision:0.91
+		Recall :0.0909091
+
+		Corrects: 427
+		L: 500
+		Edges Removed: 3003
+		Precision:0.854
+		Recall :0.142191
+
+		Corrects: 730
+		L: 1000
+		Edges Removed: 3003
+		Precision:0.73
+		Recall :0.24309
+
+Adamic
+		Corrects: 94
+		L: 100
+		Edges Removed: 3003
+		Precision:0.94
+		Recall :0.031302
+
+		Corrects: 272
+		L: 300
+		Edges Removed: 3003
+		Precision:0.906667
+		Recall :0.0905761
+
+		Corrects: 430
+		L: 500
+		Edges Removed: 3003
+		Precision:0.86
+		Recall :0.14319
+
+		Corrects: 738
+		L: 1000
+		Edges Removed: 3003
+		Precision:0.738
+		Recall :0.245754
