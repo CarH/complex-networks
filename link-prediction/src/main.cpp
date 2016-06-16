@@ -40,7 +40,8 @@ int main(int argc, char const *argv[])
 		// cout<<"Local Clust.(2290) = " << compNet->localClusteringCoefficient(2290)<<endl;
 		cout<<"Global Clust() = " << compNet->globalClusteringCoefficient()<<endl;
 
-
+		cout<<"Assortativity: "<<compNet->computeAssortativity()<<endl;
+		
 		// Generate reports to original network
 		compNet->printVertexDegreeList("VertexDegreeList_"+datasetName);
 		compNet->printDegreeDistribution("DegreeDistribution_"+datasetName);
