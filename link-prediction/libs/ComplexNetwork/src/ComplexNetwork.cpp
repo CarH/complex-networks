@@ -11,14 +11,23 @@ ComplexNetwork::~ComplexNetwork() {
 	delete this->net;
 }
 int ComplexNetwork::CN(int u, int v) {
+	pair<int,int> p1 = pair<int,int>(u,v);
+	pair<int,int> p2 = pair<int,int>(v,u);
+	if(this->CNPerNode.count(p1)>0){
+		return this->CNPerNode[p1];
+	}else if(this->CNPerNode.count(p2)>0){
+		return this->CNPerNode[p2];
+	}
 	std::set<int> uNeighbors = this->net->getAdjList(u);
 	std::set<int> vNeighbors = this->net->getAdjList(v);
 	int cnt=0;
 	
 	for (std::set<int>::iterator it = vNeighbors.begin(); it != vNeighbors.end(); it++)
-		if (uNeighbors.count(*it)!=0)
+		if (uNeighbors.count(*it)!=0){
 			cnt++;
-	
+			
+		}
+	this->CNPerNode[p1]=cnt;
 	return cnt;
 }
  

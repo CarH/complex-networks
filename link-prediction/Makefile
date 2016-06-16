@@ -10,7 +10,7 @@ CFLAGS=-c -Wall -g
 NSAMPLES = 1
 CONSIDER_CONN_COMP = 1
 PREPROC_MIN_DEGREE = 3
-PREPROC_NUM_EDGES = 5
+PREPROC_NUM_EDGES = 10
 PREPROC_TOP_N_DEG = 3
 
 all: clean mkdirGeneratedDatasets mkdirLibraries compile
@@ -132,40 +132,43 @@ exec:
 	#######################################
 	# EXEC for Facebook dataset
 	# _PreProc_Edge_
-
+	# NO PREPROC
+	@./prog generatedDatasets/facebook_TrainingSample_0.links facebook_TrainingSample_0 
+	@./prog generatedDatasets/facebook_TrainingSample_0_keepCompConex.links facebook_TrainingSample_0_keepCompConex
+	# PREPROC EDGE
 	@./prog generatedDatasets/facebook_PreProc_Edge__TrainingSample_0.links facebook_PreProc_Edge__TrainingSample_0 
 	@./prog generatedDatasets/facebook_PreProc_Edge__TrainingSample_0_keepCompConex.links facebook_PreProc_Edge__TrainingSample_0_keepCompConex
-
+	# PREPROCVERT
 	@./prog generatedDatasets/facebook_PreProc_Vert__TrainingSample_0.links facebook_PreProc_Vert__TrainingSample_0
 	@./prog generatedDatasets/facebook_PreProc_Vert__TrainingSample_0_keepCompConex.links facebook_PreProc_Vert__TrainingSample_0_keepCompConex
 	@echo
 	#######################################
 	# EXEC for Foursquare dataset
-
+	# NO PREPROC
+	@./prog generatedDatasets/foursquare_TrainingSample_0.links foursquare_TrainingSample_0
+	@./prog generatedDatasets/foursquare_TrainingSample_0_keepCompConex.links foursquare_TrainingSample_0_keepCompConex
+	# PREPROC EDGE
 	@./prog generatedDatasets/foursquare_PreProc_Edge__TrainingSample_0.links foursquare_PreProc_Edge__TrainingSample_0
 	@./prog generatedDatasets/foursquare_PreProc_Edge__TrainingSample_0_keepCompConex.links foursquare_PreProc_Edge__TrainingSample_0_keepCompConex
-
+	# PREPROCVERT
 	@./prog generatedDatasets/foursquare_PreProc_Vert__TrainingSample_0.links foursquare_PreProc_Vert__TrainingSample_0 
 	@./prog generatedDatasets/foursquare_PreProc_Vert__TrainingSample_0_keepCompConex.links foursquare_PreProc_Vert__TrainingSample_0_keepCompConex
 	@echo
 	#######################################
 	# EXEC for GPlus dataset
+	# NO PREPROC
+	@./prog generatedDatasets/gplus_TrainingSample_0.links gplus_TrainingSample_0 
+	@./prog generatedDatasets/gplus_TrainingSample_0_keepCompConex.links gplus_TrainingSample_0_keepCompConex
 
+	# PREPROC EDGE
 	@./prog generatedDatasets/gplus_PreProc_Edge__TrainingSample_0.links gplus_PreProc_Edge__TrainingSample_0 
 	@./prog generatedDatasets/gplus_PreProc_Edge__TrainingSample_0_keepCompConex.links gplus_PreProc_Edge__TrainingSample_0_keepCompConex
 
+	# PREPROCVERT
 	@./prog generatedDatasets/gplus_PreProc_Vert__TrainingSample_0.links gplus_PreProc_Vert__TrainingSample_0 
 	@./prog generatedDatasets/gplus_PreProc_Vert__TrainingSample_0_keepCompConex.links gplus_PreProc_Vert__TrainingSample_0_keepCompConex
 
-	#######################################
-	# EXEC for Test dataset
-
-	@./prog generatedDatasets/test_PreProc_Edge__TrainingSample_0.links test_PreProc_Edge__TrainingSample_0 
-	@./prog generatedDatasets/test_PreProc_Edge__TrainingSample_0_keepCompConex.links test_PreProc_Edge__TrainingSample_0_keepCompConex
-
-	@./prog generatedDatasets/test_PreProc_Vert__TrainingSample_0.links test_PreProc_Vert__TrainingSample_0 
-	@./prog generatedDatasets/test_PreProc_Vert__TrainingSample_0_keepCompConex.links test_PreProc_Vert__TrainingSample_0_keepCompConex
 	
 clean:
-	rm -rf libraries/ *.o prog generateSamples 
+	rm -rf libraries/ *.o prog generateSamples preproc
 

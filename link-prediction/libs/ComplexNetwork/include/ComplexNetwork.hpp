@@ -46,6 +46,9 @@
 			std::vector<std::pair<std::pair<int,int>,double > > adamicAdarCoeffBuffer;
 			std::vector<std::pair<std::pair<int,int>,double > > CNCoeffBuffer;
 
+			std::map<std::pair<int,int>, double > CNPerNode;
+			
+
 			void buildDegreeVerticesMap();
 			void buildlocalClusteringCoeffPerNode();
 			void buildlocalClusteringCoeffMap();

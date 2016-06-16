@@ -97,7 +97,7 @@ Graph Graph::removeEdgesFromHighDegreeVertices(int numEdges,int topNDegrees){
 			n++;
 		}
 		previousDeg=currDeg;
-		for(int i=0;i<numEdges && resultingGraph.adjList[u].size()>0;i++){
+		for(int i=0;i<numEdges*0.01*resultingGraph.adjList[u].size() && resultingGraph.adjList[u].size()>0;i++){
 			int edgeToRemoveIndex = rand()%resultingGraph.adjList[u].size();
 			// resultingGraph.adjList[u].erase(resultingGraph.adjList[u].begin()+edgeToRemoveIndex);
 			set<int>::iterator pointerToItemToBeRemoved = resultingGraph.adjList[u].begin();
