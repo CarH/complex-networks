@@ -327,7 +327,11 @@ double ComplexNetwork::globalClusteringCoefficient(){
 	}
 	return localTriangles/localTripplets;
 }
-std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::adamicAdarAll(){
+
+std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::jaccardAll(){
+	if(this->jaccardCoeffBuffer.size()>0){
+		return this->jaccardCoeffBuffer;
+	}
 	vector<pair<pair<int,int>,double> > result;
 	set<int> vertices = this->net->getVertices();
 	for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
@@ -335,7 +339,30 @@ std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::adamicAdarAll
 		for(set<int>::iterator it2 = vertices.begin();it2!=vertices.end();it2++){
 			int v=*it2;
 			if(u>v){
-				result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->adamicAdarCoefficient(u,v)));
+				if(this->net->getAdjList(u).count(v)==0){
+					result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->jaccardCoefficient(u,v)));
+				}
+			}
+			
+		}	
+	}
+
+	return result;
+}
+std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::adamicAdarAll(){
+	if(this->adamicAdarCoeffBuffer.size()>0){
+		return this->adamicAdarCoeffBuffer;
+	}
+	vector<pair<pair<int,int>,double> > result;
+	set<int> vertices = this->net->getVertices();
+	for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
+		int u=*it;
+		for(set<int>::iterator it2 = vertices.begin();it2!=vertices.end();it2++){
+			int v=*it2;
+			if(u>v){
+				if(this->net->getAdjList(u).count(v)==0){
+					result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->adamicAdarCoefficient(u,v)));
+				}
 			}
 			
 		}	
@@ -343,6 +370,9 @@ std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::adamicAdarAll
 	return result;
 }
 std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::CNAll(){
+	if(this->CNCoeffBuffer.size()>0){
+		return this->CNCoeffBuffer;
+	}
 	vector<pair<pair<int,int>,double> > result;
 	set<int> vertices = this->net->getVertices();
 	for(set<int>::iterator it = vertices.begin();it!=vertices.end();it++){
@@ -350,15 +380,17 @@ std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::CNAll(){
 		for(set<int>::iterator it2 = vertices.begin();it2!=vertices.end();it2++){
 			int v=*it2;
 			if(u>v){
-				result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->CN(u,v)));
+				if(this->net->getAdjList(u).count(v)==0){
+					result.push_back(pair<pair<int,int>,double>(pair<int,int>(u,v),this->CN(u,v)));
+				}
 			}
-			
 		}
 		
 	}
 	return result;
 }
-void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > &edgesToCheck,int K){
+void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > &edgesToCheck,int K,ostream &outFile){
+	this->calculatePredictorsBuffers();
 	vector<pair<pair<int,int>,double> > coefficients;
 	int counterCorrectM = 0;
 	pair<int,int> p1;
@@ -368,15 +400,19 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 	//accuracy = true positive + true negative / total population
 	comp = ComparisonPredictors();
 	switch (predictor){
+		case PREDICTOR_JACCARD:
+			// cerr<<"Running Jaccard for All Pairs"<<endl;
+			coefficients  = this->jaccardAll();
+			break;
 		case PREDICTOR_ADAMIC_ADAR:
-			cerr<<"Running Adamic Adar for All Pairs"<<endl;
+			// cerr<<"Running Adamic Adar for All Pairs"<<endl;
 			coefficients  = this->adamicAdarAll();
-			cerr<<"AdamicAdarOrdenado:"<<endl;
+			// cerr<<"AdamicAdarOrdenado:"<<endl;
 			break;
 		case PREDICTOR_CN:
-			cerr<<"Running CN for All Pairs"<<endl;
+			// cerr<<"Running CN for All Pairs"<<endl;
 			coefficients  = this->CNAll();
-			cerr<<"AdamicAdarOrdenado:"<<endl;
+			// cerr<<"CN Ordenado:"<<endl;
 			break;
 		default:
 			cerr<<"Invalid Predictor"<<endl;
@@ -384,15 +420,155 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 			break;
 	}
 	sort(coefficients.begin(),coefficients.end(),comp);
+
+
 	for(int i=0;i<K;i++){
 		p1=coefficients[i].first;
 		p2 = pair<int,int>(coefficients[i].first.second,coefficients[i].first.first);
-		cerr<<"\t"<<coefficients[i].first.first<<" "<<coefficients[i].first.second<<" "<<coefficients[i].second<<endl;
+		// cerr<<"\t"<<coefficients[i].first.first<<" "<<coefficients[i].first.second<<" "<<coefficients[i].second<<endl;
 		if(edgesToCheck.count(p1)>0 || edgesToCheck.count(p2)>0){
 			counterCorrectM++;
 		}
 	}
-	cerr<<"\t\tCorrect :"<<counterCorrectM <<" out of "<<K<<endl;
-	double percentage = counterCorrectM*1.0/edgesToCheck.size();
-	cerr<<"\t\tCorrect :"<<counterCorrectM <<" out of "<<edgesToCheck.size()<<": "<<percentage<<endl;
+
+	double precision = counterCorrectM*1.0 / K;
+	double recall = (edgesToCheck.size()!=0)?counterCorrectM*1.0/edgesToCheck.size():0;
+	outFile<<"\t\tCorrects: "<<counterCorrectM<<endl;
+	outFile<<"\t\tL: "<<K<<endl;
+	outFile<<"\t\tEdges Removed: "<<edgesToCheck.size()<<endl;
+	outFile<<"\t\tPrecision:"<<precision<<endl;
+	outFile<<"\t\tRecall :"<<recall<<endl;
+}
+
+void ComplexNetwork::printLocalClustHistogram(){
+	this->buildlocalClusteringCoeffMap();
+	for (map<double,vector<int> >::iterator it = this->localClusteringCoeffMap.begin(); 
+			it != this->localClusteringCoeffMap.end(); 
+			it++)
+		cout << it->first << " " << it->second.size() << "\n";
+}
+
+void ComplexNetwork::printLocalClustHistogram(std::string filename, std::string suffix){
+	this->buildlocalClusteringCoeffMap();
+	ofstream outFile;
+	string outFilename = filename + "." + suffix;
+
+	outFile.open(outFilename.c_str());
+	if (outFile.is_open()) {
+		for (map<double,vector<int> >::iterator it = this->localClusteringCoeffMap.begin();
+			it != this->localClusteringCoeffMap.end();
+			it++
+		)
+			outFile << it->first << " " << it->second.size() << "\n";
+		outFile.close();
+	}
+	else {
+		cerr << "ERROR: Output File could not be created: " << outFilename << "\n";
+	}
+}
+void ComplexNetwork::calculatePredictorsBuffers(){
+	vector<pair<pair<int,int>,double> > coefficients;
+	pair<int,int> p1;
+	pair<int,int> p2;	
+	ComparisonPredictors comp;
+	//Precision  = true Positive / Total Positive
+	//accuracy = true positive + true negative / total population
+	comp = ComparisonPredictors();
+	if(this->jaccardCoeffBuffer.empty()) {
+		cerr<<"Calculating JACCARD for ALL PAIRS"<<endl;
+		coefficients  = this->jaccardAll();
+		sort(coefficients.begin(),coefficients.end(),comp);
+		this->jaccardCoeffBuffer.insert(this->jaccardCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+		
+	}
+	if(this->adamicAdarCoeffBuffer.empty()){
+		cerr<<"Calculating ADAMIC ADAR for ALL PAIRS"<<endl;
+		coefficients  = this->adamicAdarAll();
+		sort(coefficients.begin(),coefficients.end(),comp);
+		this->adamicAdarCoeffBuffer.insert(this->adamicAdarCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+	}
+
+	if(this->CNCoeffBuffer.empty()){
+		cerr<<"Calculating CN for ALL PAIRS"<<endl;
+		coefficients  = this->CNAll();
+		sort(coefficients.begin(),coefficients.end(),comp);
+		this->CNCoeffBuffer.insert(this->CNCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+	}
+
+	
+
+}
+
+void ComplexNetwork::printPredictorsBuffer(std::string filename, std::string suffix){
+	this->calculatePredictorsBuffers();
+	
+	ofstream outFile;
+	string outFilename = filename + "." + suffix;
+
+	outFile.open(outFilename.c_str());
+	if (outFile.is_open()) {
+		outFile<<"Jaccard"<<endl;
+		for (vector<pair<pair<int,int>,double> >::iterator it = this->jaccardCoeffBuffer.begin();
+			it != this->jaccardCoeffBuffer.end();
+			it++
+		)
+			outFile << it->first.first << " "<<it->first.second <<" " << it->second << "\n";
+		outFile<<"Adamic"<<endl;
+		for (vector<pair<pair<int,int>,double> >::iterator it = this->adamicAdarCoeffBuffer.begin();
+			it != this->adamicAdarCoeffBuffer.end();
+			it++
+		)
+			outFile << it->first.first << " "<<it->first.second <<" " << it->second << "\n";
+
+		outFile<<"CN"<<endl;
+		for (vector<pair<pair<int,int>,double> >::iterator it = this->CNCoeffBuffer.begin();
+			it != this->CNCoeffBuffer.end();
+			it++
+		)
+			outFile << it->first.first << " "<<it->first.second <<" " << it->second << "\n";
+		outFile.close();
+	}
+	else {
+		cerr << "ERROR: Output File could not be created: " << outFilename << "\n";
+	}
+}
+void ComplexNetwork::runAval(std::string filename,set<pair<int,int> >edgesRemoved ,std::string suffix){
+
+	ofstream outFile;
+	string outFilename = filename + "." + suffix;
+
+	outFile.open(outFilename.c_str());
+	if (outFile.is_open()) {
+		outFile<<"Jaccard"<<endl;
+		this->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,100,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,300,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,500,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_JACCARD,edgesRemoved,1000,outFile);
+		outFile<<endl;
+		outFile<<"CN "<<endl;
+		this->linkPrediction(PREDICTOR_CN,edgesRemoved,100,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_CN,edgesRemoved,300,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_CN,edgesRemoved,500,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_CN,edgesRemoved,1000,outFile);
+		outFile<<endl;
+		outFile<<"Adamic"<<endl;
+		this->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,100,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,300,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,500,outFile);
+		outFile<<endl;
+		this->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,1000,outFile);
+		
+		outFile.close();
+	}
+	else {
+		cerr << "ERROR: Output File could not be created: " << outFilename << "\n";
+	}
 }

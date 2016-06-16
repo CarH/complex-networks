@@ -16,12 +16,17 @@ int main(int argc, char const *argv[])
 	Graph trainingGraph;
 	Graph edgesRemovedGraph;
 	int u, v,samplesNumber;
+	bool considerConCom;
 	stringstream sStream;
 
 	inFileName = argv[1];
-	datasetName= argv[2];
+	datasetName= argv[2];	
 	samplesNumber = atoi(argv[3]);
+	considerConCom = atoi(argv[4]);
 	inFile.open(inFileName.c_str());
+	srand(time(NULL));
+	string consid;
+	consid = (considerConCom) ? "_keepCompConex":"";
 	if (inFile.is_open()) {
 		while (inFile >> u >> v) {
 			origNet.connectu(u,v);
@@ -32,6 +37,7 @@ int main(int argc, char const *argv[])
 		cerr<<"Degree(2290) = " << origNet.getDegree(2290)<<endl;
 		cerr<<"Density = "<<origNet.getDensity()<<endl;
 		cerr<<"AVG Degree: "<<origNet.getAvgDegree()<<endl;
+		cerr<<"#Connected Components "<< origNet.getNumberOfConnectedComponents()<<endl;
 		set<pair<int,int> > edgesRemoved;
 		for(int i=0;i<samplesNumber;i++){
 			sStream.clear();
@@ -40,13 +46,13 @@ int main(int argc, char const *argv[])
 			sStream.setf(ios::fixed);
 			sStream<<i;
 			edgesRemoved.clear();
-			trainingGraph = origNet.getEdgeSample(0.9,edgesRemoved);
+			trainingGraph = origNet.getEdgeSample(0.9,edgesRemoved,considerConCom);
 			edgesRemovedGraph = Graph();
 			for(set<pair<int,int> >::iterator it=edgesRemoved.begin();it!=edgesRemoved.end();it++){
 				edgesRemovedGraph.connectu(it->first,it->second);
 			}
-			trainingGraph.writeToFile(datasetName+"_TrainingSample_"+sStream.str()+".links");
-			edgesRemovedGraph.writeToFile(datasetName+"_TrainingSample_"+sStream.str()+"_edgesRemoved.links");
+			trainingGraph.writeToFile(datasetName+"_TrainingSample_"+sStream.str()+consid+".links");
+			edgesRemovedGraph.writeToFile(datasetName+"_TrainingSample_"+sStream.str()+consid+"_edgesRemoved.links");
 			cerr<<endl<<"====TRAINING NET===="<<endl;
 			cerr<<"#Removed Edges: "<<edgesRemoved.size()<<endl;
 			cerr<<"#Vertices: "<<trainingGraph.getVerticesQnt()<<endl;
@@ -54,6 +60,7 @@ int main(int argc, char const *argv[])
 			cerr<<"Degree(2290) = " << trainingGraph.getDegree(2290)<<endl;
 			cerr<<"Density = "<<trainingGraph.getDensity()<<endl;
 			cerr<<"AVG Degree: "<<trainingGraph.getAvgDegree()<<endl;
+			cerr<<"#Connected Components "<< trainingGraph.getNumberOfConnectedComponents()<<endl;
 
 			// trainingNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,100);
 			// trainingNet->linkPrediction(PREDICTOR_CN,edgesRemoved,10);

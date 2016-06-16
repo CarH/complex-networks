@@ -1,6 +1,8 @@
 #include <iostream>
+#include <ostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <map>
 #include "Graph.hpp"
 #include "ComplexNetwork.hpp"
@@ -10,85 +12,92 @@ using namespace std;
 int main(int argc, char const *argv[])
 {
 	ifstream inFile;
-	string inFileName, datasetName;
+	ifstream inFileEdgesRemoved;
+	string inFileName, datasetName, edgesRemovedSuffix;
 	Graph origNet;
-	Graph preProcessNetLowDegree;
-	Graph trainingGraph;
+	Graph edgesRemovedGraph;
 	ComplexNetwork *compNet;
-	ComplexNetwork *compNetPreProc;
-	ComplexNetwork *trainingNet;
+	string filePath;
+
+
+
+
 	int u, v;
+	set<pair<int,int> > edgesRemoved;
 
 	inFileName = argv[1];
 	datasetName= argv[2];
+	edgesRemovedSuffix="_edgesRemoved.links";
+
+
+	int found = inFileName.find_last_of("/");
+  	filePath =  inFileName.substr(0,found);
+
+
+	string edgesRemovedFileName = filePath+"/"+datasetName+edgesRemovedSuffix;
+	inFileEdgesRemoved.open(edgesRemovedFileName.c_str());
+	if(inFileEdgesRemoved.is_open()){
+		while (inFileEdgesRemoved >> u >> v) {
+			edgesRemovedGraph.connectu(u,v);
+		}
+
+		inFileEdgesRemoved.close();
+
+		edgesRemoved=edgesRemovedGraph.getEdgesInPairs();
+	}else{
+		cerr<<"ERROR: Could not open "<<edgesRemovedFileName<<endl;
+		edgesRemoved.clear();
+	}
+
 	inFile.open(inFileName.c_str());
 	if (inFile.is_open()) {
 		while (inFile >> u >> v) {
 			origNet.connectu(u,v);
 		}
 		
+		//DEBUG
+		// Graph debugTest=origNet;
+		// set<pair<int,int> > origEdgesInPairs = origNet.getEdgesInPairs();
+		// for(set<pair<int,int> >::iterator it= edgesRemoved.begin();it!=edgesRemoved.end();it++){
+		// 	pair<int,int> p2 = pair<int,int>(it->second,it->first);
+		// 	if (origEdgesInPairs.count(*it)>0 || origEdgesInPairs.count(p2)>0){
+		// 		cerr<<"ERROR: edges removed overlap"<<endl;
+		// 		exit(EXIT_FAILURE);
+		// 	}
+		// 	debugTest.connectu(it->first,it->second);
+		// }
+		// debugTest.writeToFile("debug.links");
+		//FIM DEBUG
 		compNet = new ComplexNetwork(origNet);
 		
 		cout<<"====ORIGINAL NET===="<<endl;
 		cout<<"#Vertices: "<<origNet.getVerticesQnt()<<endl;
 		cout<<"#Edges: "<<origNet.getEdgesQnt()<<endl;
-		// cout<<"Degree(2290) = " << origNet.getDegree(2290)<<endl;
 		cout<<"AVG Degree: "<<origNet.getAvgDegree()<<endl;
 		cout<<"Density = "<<origNet.getDensity()<<endl;
-		// cout<<"Commmon Neighbors (2090, 2025): "<< compNet->CN(2090,2025)<<endl;
-		// cout<<"Adamic-Adar (2090,2025): "<<compNet->adamicAdarCoefficient(2090,2025)<<endl;
-		// cout<<"Local Clust.(2290) = " << compNet->localClusteringCoefficient(2290)<<endl;
 		cout<<"Global Clust() = " << compNet->globalClusteringCoefficient()<<endl;
+		cerr<<"#Connected Components "<< origNet.getNumberOfConnectedComponents()<<endl;
 
 		cout<<"Assortativity: "<<compNet->computeAssortativity()<<endl;
+
 		
+		compNet->calculatePredictorsBuffers();
 		// Generate reports to original network
 		compNet->printVertexDegreeList("VertexDegreeList_"+datasetName);
 		compNet->printDegreeDistribution("DegreeDistribution_"+datasetName);
 		compNet->printDegreeHistogram("DegreeHistogram_"+datasetName);
+		compNet->printLocalClustHistogram("LocalClustHistogram_"+datasetName);
+		compNet->printPredictorsBuffer("Predictors_"+datasetName);
 
 		
-		// cout<<"Common Neighbors Node(2090,2025): "
+		//100 300 500 1000
+		compNet->runAval("Results_"+datasetName,edgesRemoved);
 		
-		// // preProcessNetLowDegree = origNet.removeVerticesLowDegree(1);
-		// preProcessNetLowDegree = origNet.removeEdgesFromHighDegreeVertices(10,5);
-		// // preProcessNetLowDegree.writeToFile(datasetName+"_PreProc.links");
-		// compNetPreProc = new ComplexNetwork(preProcessNetLowDegree);
-		// cout<<endl<<"====PREPROC NET===="<<endl;
-		// cout<<"#Vertices: "<<preProcessNetLowDegree.getVerticesQnt()<<endl;
-		// cout<<"#Edges: "<<preProcessNetLowDegree.getEdgesQnt()<<endl;
-		// cout<<"Degree(2290) = " << preProcessNetLowDegree.getDegree(2290)<<endl;
-		// cout<<"Density = "<<preProcessNetLowDegree.getDensity()<<endl;
-		// cout<<"AVG Degree: "<<preProcessNetLowDegree.getAvgDegree()<<endl;
-		// cout<<"Commmon Neighbors (2090, 2025): "<< compNetPreProc->CN(2090,2025)<<endl;
-		// cout<<"Adamic-Adar (2090,2025): "<<compNetPreProc->adamicAdarCoefficient(2090,2025)<<endl;
-		// cout<<"Local Clust.(2290) = " << compNetPreProc->localClusteringCoefficient(2290)<<endl;
-		// cout<<"Global Clust.() = " << compNetPreProc->globalClusteringCoefficient()<<endl;
-
-		// set<pair<int,int> > edgesRemoved;
-		// trainingGraph = origNet.getEdgeSample(0.9,edgesRemoved);
-		// // trainingGraph.writeToFile(datasetName+"_TrainingSample.links");
-		// trainingNet = new ComplexNetwork(trainingGraph);
-		// cout<<endl<<"====TRAINING NET===="<<endl;
-		// cout<<"#Removed Edges: "<<edgesRemoved.size()<<endl;
-		// cout<<"#Vertices: "<<trainingGraph.getVerticesQnt()<<endl;
-		// cout<<"#Edges: "<<trainingGraph.getEdgesQnt()<<endl;
-		// cout<<"Degree(2290) = " << trainingGraph.getDegree(2290)<<endl;
-		// cout<<"Density = "<<trainingGraph.getDensity()<<endl;
-		// cout<<"AVG Degree: "<<trainingGraph.getAvgDegree()<<endl;
-		// cout<<"Commmon Neighbors (2090, 2025): "<< trainingNet->CN(2090,2025)<<endl;
-		// cout<<"Adamic-Adar (2090,2025): "<<trainingNet->adamicAdarCoefficient(2090,2025)<<endl;
-		// cout<<"Local Clust.(2290) = " << trainingNet->localClusteringCoefficient(2290)<<endl;
-		// cout<<"Global Clust.() = " << trainingNet->globalClusteringCoefficient()<<endl;
-
-		// // trainingNet->linkPrediction(PREDICTOR_ADAMIC_ADAR,edgesRemoved,100);
-		// // trainingNet->linkPrediction(PREDICTOR_CN,edgesRemoved,10);
+		
 		cout<<endl;
 
 		inFile.close();
 		delete compNet;
-		// delete compNetPreProc;
-		// delete trainingNet;
 	}
 
 	return 0;

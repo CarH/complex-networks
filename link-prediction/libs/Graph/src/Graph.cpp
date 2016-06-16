@@ -98,28 +98,41 @@ Graph Graph::removeEdgesFromHighDegreeVertices(int numEdges,int topNDegrees){
 	Graph resultingGraph = *(this);
 	int n=0;
 	
-
-	for(vector<pair<int,int> >::iterator it=degrees.begin();it!=degrees.end() && n<topNDegrees;it++,n++){
+	int previousDeg=-1;
+	for(vector<pair<int,int> >::iterator it=degrees.begin();it!=degrees.end() && n<topNDegrees;it++){
 		int u = it->first;
+		int currDeg= it->second;
+		if(currDeg!=previousDeg){
+			n++;
+		}
+		previousDeg=currDeg;
 		for(int i=0;i<numEdges && resultingGraph.adjList[u].size()>0;i++){
 			int edgeToRemoveIndex = rand()%resultingGraph.adjList[u].size();
 			// resultingGraph.adjList[u].erase(resultingGraph.adjList[u].begin()+edgeToRemoveIndex);
 			set<int>::iterator pointerToItemToBeRemoved = resultingGraph.adjList[u].begin();
-			for(int k=0;k<edgeToRemoveIndex;k++){
+			for(int k=0;k<edgeToRemoveIndex;k++){//GAMBS pra funcionar o iterador
 				pointerToItemToBeRemoved++;
 			}
-			resultingGraph.adjList[u].erase(pointerToItemToBeRemoved);
+			resultingGraph.removeEdgeu(u,*pointerToItemToBeRemoved);
 		}
 	}
 	resultingGraph.numEdges = resultingGraph.getEdgesQnt();
 	return resultingGraph;
 }
 
-Graph Graph::getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved){
+Graph Graph::getEdgeSample(double percentage,std::set<std::pair<int,int> > &edgesRemoved,bool considerConnecComponents){
 	Graph sampleGraph;
-	vector<pair<int,int> > remainingEdges;
+	set<pair<int,int> >  remainingEdges;
+	vector<pair<int,int> > remainingEdgesToChoose;
 	int numberOfEdgesToRemove = ceil(((double)this->getEdgesQnt())*(1.0-percentage));
 	
+
+	int connectedComponentOriginal=this->getNumberOfConnectedComponents();
+	int connectedComponentLocal=0;
+	// cerr<<"ORiginal Connectedd Components : "<<connectedComponentOriginal<<endl;
+	cerr.flush();
+
+
 	edgesRemoved.clear();
 	for(set<int>::iterator it=this->vertices.begin();it!=this->vertices.end();it++){
 		int u= *it;
@@ -127,16 +140,36 @@ Graph Graph::getEdgeSample(double percentage,std::set<std::pair<int,int> > &edge
 		for(set<int>::iterator it2=this->adjList[u].begin();it2!=this->adjList[u].end();it2++){
 			int v=*it2;
 			if(v>u){
-				remainingEdges.push_back(make_pair(u,v));
+				remainingEdges.insert(make_pair(u,v));
 			}
 		}
 	}
+	remainingEdgesToChoose.clear();
+	remainingEdgesToChoose.insert(remainingEdgesToChoose.end(),remainingEdges.begin(),remainingEdges.end());
+	Graph auxGraph = *(this);
 	for(int i=0;i<numberOfEdgesToRemove;i++){
-		int p = rand() % remainingEdges.size();
-		edgesRemoved.insert(remainingEdges[p]);
-		remainingEdges.erase(remainingEdges.begin()+p);
+		int p = rand() % remainingEdgesToChoose.size();
+		
+		// cerr<<"Remaining size :"<< remainingEdges.size()<<endl;
+		// cerr<<"\t\tChosen["<<p<<"]  :"<< remainingEdges[p].first <<" "<< remainingEdges[p].second <<endl;
+		if(considerConnecComponents){
+			auxGraph.removeEdgeu(remainingEdgesToChoose[p].first,remainingEdgesToChoose[p].second);
+			connectedComponentLocal=auxGraph.getNumberOfConnectedComponents();
+			// cerr<<"connectedComponentLocal "<<connectedComponentLocal <<endl;
+			if(connectedComponentOriginal<connectedComponentLocal){
+				// cerr<<"entrou"<<endl;
+				auxGraph.connectu(remainingEdgesToChoose[p].first,remainingEdgesToChoose[p].second);
+				i--;
+				remainingEdgesToChoose.erase(remainingEdgesToChoose.begin()+p);		
+				continue;
+			}
+		}
+
+		edgesRemoved.insert(remainingEdgesToChoose[p]);
+		remainingEdges.erase(remainingEdgesToChoose[p]);
+		remainingEdgesToChoose.erase(remainingEdgesToChoose.begin()+p);
 	}
-	for(vector<pair<int,int> >::iterator it = remainingEdges.begin();it!=remainingEdges.end();it++){
+	for(set<pair<int,int> >::iterator it = remainingEdges.begin();it!=remainingEdges.end();it++){
 		sampleGraph.connectu(it->first,it->second);
 	}
 	return sampleGraph;
@@ -164,4 +197,88 @@ void Graph::writeToFile(string fileName){
 	}else{
 		cerr<<"ERROR: Could not open file for writting: "<<fileName<<endl;
 	}
+}
+void Graph::bfs(int source){
+	
+	int currentVertex;
+
+	queue<int> q;
+
+	
+
+	this->visited[source]=VISIT;
+	q.push(source);
+
+	
+	while(!q.empty()){
+		currentVertex= q.front();
+		q.pop();
+		for(set<int>::iterator it=this->adjList[currentVertex].begin();
+				it!=this->adjList[currentVertex].end();
+				it++){
+			int childNode = *it;
+			if(this->visited[childNode]==NOT_VISIT){//se ainda nao foi visitado
+				q.push(childNode);
+				visited[childNode]=VISIT;
+			}
+		}
+	}
+}
+void Graph::resetVisited(){
+	this->visited.set(); 
+	for(int i=0;i<N;i++){
+		if(this->vertices.count(i)==0){
+			this->visited.reset(i);
+		}
+	}
+}
+
+bool Graph::removeEdgeu(int u,int v){
+	if (this->adjList[u].count(v)>0 && this->adjList[v].count(u)>0) {
+		this->removeEdge(u,v);
+		this->removeEdge(v,u);
+		this->numEdges--;
+	}
+	
+}
+
+bool Graph::removeEdge(int u,int v){
+	return this->adjList[u].erase(v);
+}
+bool Graph::wasAllVisited(){
+	return this->visited.none();
+}
+
+int Graph::getUnvisitedVertex(){
+	for(set<int>::iterator it=this->vertices.begin();it!=this->vertices.end();it++){
+		if(this->visited[*it]==NOT_VISIT){
+			return *it;
+		}
+	}
+	return -1;
+}
+
+int Graph::getNumberOfConnectedComponents(){
+	int n=0;
+	this->resetVisited();
+	while(!this->wasAllVisited()){
+		int src=this->getUnvisitedVertex();
+		this->bfs(src);
+		n++;
+	}	
+	return n;
+}
+
+set<pair<int,int> > Graph::getEdgesInPairs(){
+	set<pair<int,int> > edg;
+	for(set<int>::iterator it=this->vertices.begin();it!=this->vertices.end();it++){
+		int u= *it;
+		for(set<int>::iterator it2=this->adjList[u].begin();it2!=this->adjList[u].end();it2++){
+			int v=*it2;
+			if(v>u){
+				edg.insert(pair<int,int>(u,v));
+			}
+		}
+	}
+	return edg;
 }
