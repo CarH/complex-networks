@@ -7,7 +7,7 @@ SRC_COMPLEX_NET_PATH=libs/ComplexNetwork/src/ComplexNetwork.cpp
 LIBRARIES_PATH=libraries/
 CC=g++
 CFLAGS=-c -Wall -g
-NSAMPLES = 10
+NSAMPLES = 2
 CONSIDER_CONN_COMP = 1
 
 all: clean mkdirGeneratedDatasets mkdirLibraries compile
@@ -39,38 +39,42 @@ generateSamples.o: Graph.o
 test:
 	#######################################
 	# Executing Test 1: Facebook dataset
-	@./prog dataset/facebook.links facebook
+	# @./prog dataset/facebook.links facebook
 	@echo
 	#######################################
 	# Executing Test 2: Foursquare dataset
-	@./prog dataset/foursquare.links foursquare
+	# @./prog dataset/foursquare.links foursquare
 	@echo
 	#######################################
 	# Executing Test 3: GPlus dataset
-	@./prog dataset/gplus.links gplus
+	# @./prog dataset/gplus.links gplus
 	@echo
 	#######################################
 	# Executing Test 4: Test dataset
-	@./prog dataset/test.links test_
-
+	# @./prog dataset/test.links test_
+	@./prog generatedDatasets/facebook_TrainingSample_0.links facebook_TrainingSample_0
 	@mkdir -p reports
 	@mv *.out ./reports
 genSamples:
 	#######################################
 	# Generating Samples for Facebook dataset
-	@./generateSamples dataset/facebook.links facebook $(NSAMPLES) $(CONSIDER_CONN_COMP)
+	@./generateSamples dataset/facebook.links facebook $(NSAMPLES) 0
+	@./generateSamples dataset/facebook.links facebook $(NSAMPLES) 1
 	@echo
 	#######################################
 	# Generating Samples for Foursquare dataset
-	@./generateSamples dataset/foursquare.links foursquare $(NSAMPLES) $(CONSIDER_CONN_COMP)
+	@./generateSamples dataset/foursquare.links foursquare $(NSAMPLES) 0
+	@./generateSamples dataset/foursquare.links foursquare $(NSAMPLES) 1
 	@echo
 	#######################################
 	# Generating Samples for GPlus dataset
-	@./generateSamples dataset/gplus.links gplus $(NSAMPLES) $(CONSIDER_CONN_COMP)
+	@./generateSamples dataset/gplus.links gplus $(NSAMPLES) 0
+	@./generateSamples dataset/gplus.links gplus $(NSAMPLES) 1
 
 	#######################################
 	# Generating Samples for Test dataset
-	@./generateSamples dataset/test.links test $(NSAMPLES) $(CONSIDER_CONN_COMP)
+	@./generateSamples dataset/test.links test $(NSAMPLES) 0
+	@./generateSamples dataset/test.links test $(NSAMPLES) 1
 	
 	@mv *.links ./generatedDatasets
 clean:

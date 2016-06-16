@@ -254,3 +254,17 @@ int Graph::getNumberOfConnectedComponents(){
 	}	
 	return n;
 }
+
+set<pair<int,int> > Graph::getEdgesInPairs(){
+	set<pair<int,int> > edg;
+	for(set<int>::iterator it=this->vertices.begin();it!=this->vertices.end();it++){
+		int u= *it;
+		for(set<int>::iterator it2=this->adjList[u].begin();it2!=this->adjList[u].end();it2++){
+			int v=*it2;
+			if(v>u){
+				edg.insert(pair<int,int>(u,v));
+			}
+		}
+	}
+	return edg;
+}

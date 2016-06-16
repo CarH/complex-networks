@@ -82,5 +82,7 @@
 
 			int getNumberOfConnectedComponents();
 
+			std::set<std::pair<int,int> > getEdgesInPairs();
+
 	};
 #endif

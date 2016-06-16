@@ -309,6 +309,7 @@ std::vector<std::pair<std::pair<int,int>,double> > ComplexNetwork::CNAll(){
 	return result;
 }
 void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > &edgesToCheck,int K){
+	this->calculatePredictorsBuffers();
 	vector<pair<pair<int,int>,double> > coefficients;
 	int counterCorrectM = 0;
 	pair<int,int> p1;
@@ -319,18 +320,18 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 	comp = ComparisonPredictors();
 	switch (predictor){
 		case PREDICTOR_JACCARD:
-			cerr<<"Running Jaccard for All Pairs"<<endl;
+			// cerr<<"Running Jaccard for All Pairs"<<endl;
 			coefficients  = this->jaccardAll();
 			break;
 		case PREDICTOR_ADAMIC_ADAR:
-			cerr<<"Running Adamic Adar for All Pairs"<<endl;
+			// cerr<<"Running Adamic Adar for All Pairs"<<endl;
 			coefficients  = this->adamicAdarAll();
-			cerr<<"AdamicAdarOrdenado:"<<endl;
+			// cerr<<"AdamicAdarOrdenado:"<<endl;
 			break;
 		case PREDICTOR_CN:
-			cerr<<"Running CN for All Pairs"<<endl;
+			// cerr<<"Running CN for All Pairs"<<endl;
 			coefficients  = this->CNAll();
-			cerr<<"CN Ordenado:"<<endl;
+			// cerr<<"CN Ordenado:"<<endl;
 			break;
 		default:
 			cerr<<"Invalid Predictor"<<endl;
@@ -338,35 +339,24 @@ void ComplexNetwork::linkPrediction(int predictor,std::set<std::pair<int,int> > 
 			break;
 	}
 	sort(coefficients.begin(),coefficients.end(),comp);
-	switch (predictor){
-		case PREDICTOR_JACCARD:
-			this->jaccardCoeffBuffer.insert(this->jaccardCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
-			break;
-		case PREDICTOR_ADAMIC_ADAR:
-			this->adamicAdarCoeffBuffer.insert(this->adamicAdarCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
-			break;
-		case PREDICTOR_CN:
-			this->CNCoeffBuffer.insert(this->CNCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
-			break;
-		default:
-			cerr<<"Invalid Predictor"<<endl;
-			return;
-			break;
-	}
-	
 
 
 	for(int i=0;i<K;i++){
 		p1=coefficients[i].first;
 		p2 = pair<int,int>(coefficients[i].first.second,coefficients[i].first.first);
-		cerr<<"\t"<<coefficients[i].first.first<<" "<<coefficients[i].first.second<<" "<<coefficients[i].second<<endl;
+		// cerr<<"\t"<<coefficients[i].first.first<<" "<<coefficients[i].first.second<<" "<<coefficients[i].second<<endl;
 		if(edgesToCheck.count(p1)>0 || edgesToCheck.count(p2)>0){
 			counterCorrectM++;
 		}
 	}
-	cerr<<"\t\tCorrect :"<<counterCorrectM <<" out of "<<K<<endl;
-	double percentage = counterCorrectM*1.0/edgesToCheck.size();
-	cerr<<"\t\tCorrect :"<<counterCorrectM <<" out of "<<edgesToCheck.size()<<": "<<percentage<<endl;
+
+	double precision = counterCorrectM*1.0 / K;
+	double recall = (edgesToCheck.size()!=0)?counterCorrectM*1.0/edgesToCheck.size():0;
+	cout<<"\t\tCorrects: "<<counterCorrectM<<endl;
+	cout<<"\t\tL: "<<K<<endl;
+	cout<<"\t\tEdges Removed: "<<edgesToCheck.size()<<endl;
+	cout<<"\t\tPrecision:"<<precision<<endl;
+	cout<<"\t\tRecall :"<<recall<<endl;
 }
 
 void ComplexNetwork::printLocalClustHistogram(){
@@ -403,19 +393,26 @@ void ComplexNetwork::calculatePredictorsBuffers(){
 	//Precision  = true Positive / Total Positive
 	//accuracy = true positive + true negative / total population
 	comp = ComparisonPredictors();
+	if(this->jaccardCoeffBuffer.empty()) {
+		cerr<<"Calculating JACCARD for ALL PAIRS"<<endl;
+		coefficients  = this->jaccardAll();
+		sort(coefficients.begin(),coefficients.end(),comp);
+		this->jaccardCoeffBuffer.insert(this->jaccardCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+		
+	}
+	if(this->adamicAdarCoeffBuffer.empty()){
+		cerr<<"Calculating ADAMIC ADAR for ALL PAIRS"<<endl;
+		coefficients  = this->adamicAdarAll();
+		sort(coefficients.begin(),coefficients.end(),comp);
+		this->adamicAdarCoeffBuffer.insert(this->adamicAdarCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+	}
 
-	coefficients  = this->jaccardAll();
-	sort(coefficients.begin(),coefficients.end(),comp);
-	this->jaccardCoeffBuffer.insert(this->jaccardCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
-	
-
-	coefficients  = this->adamicAdarAll();
-	sort(coefficients.begin(),coefficients.end(),comp);
-	this->adamicAdarCoeffBuffer.insert(this->adamicAdarCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
-
-	coefficients  = this->CNAll();
-	sort(coefficients.begin(),coefficients.end(),comp);
-	this->CNCoeffBuffer.insert(this->CNCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+	if(this->CNCoeffBuffer.empty()){
+		cerr<<"Calculating CN for ALL PAIRS"<<endl;
+		coefficients  = this->CNAll();
+		sort(coefficients.begin(),coefficients.end(),comp);
+		this->CNCoeffBuffer.insert(this->CNCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+	}
 
 	
 
