@@ -188,5 +188,5 @@ exec:
 
 	
 clean:
-	rm -rf libraries/ *.o prog generateSamples preproc
+	rm -rf libraries/ *.o prog generateSamples preProc
 
