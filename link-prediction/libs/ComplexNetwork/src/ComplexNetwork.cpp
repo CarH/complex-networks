@@ -164,14 +164,15 @@ void ComplexNetwork::computeQK() {
 	for (std::map<int, std::set<int> >::iterator itI = this->degreeVerticesMap.begin(); itI != this->degreeVerticesMap.end(); itI++) {
 		k = itI->first-1;
 		acc = 0.0;
-		cout << "this->net->getMaxDegree(): " << this->net->getMaxDegree() <<endl;
+		// cout << "this->net->getMaxDegree(): " << this->net->getMaxDegree() <<endl;
 		for (int i = 0; i < this->net->getMaxDegree(); i++) {
 			if (this->EMatrix.count(make_pair(i,k))) {
 				acc += this->EMatrix[ make_pair(i,k) ];
 			}
 		}
-		cerr << "acc p/ k="<<k<<" : "<<acc<<endl;
-		this->qkMap[ k ] = acc/(double)this->net->getAvgDegree();
+		// cerr << "acc p/ k="<<k<<" : "<<acc<<endl;
+		// this->qkMap[ k ] = acc/(double)this->net->getAvgDegree();
+		this->qkMap[ k ] = acc;
 	}
 }
 
@@ -203,7 +204,7 @@ void ComplexNetwork::buildJointProbabilityDistOfRemainingDegree() {
 					}
 				}
 			}
-			this->EMatrix[ make_pair(itI->first - 1, itJ->first - 1) ] = (cnt/((double)this->net->getTotalVertices()*2.0));
+			this->EMatrix[ make_pair(itI->first - 1, itJ->first - 1) ] = (cnt/((double)this->net->getTotalEdges()*2.0));
 		}
 	}
 }
@@ -225,12 +226,11 @@ double ComplexNetwork::computeAssortativity() {
 	buildJointProbabilityDistOfRemainingDegree();
 	
 	//Delete
-	printJointProbability();
+	// printJointProbability();
 
 	computeQK();
-	printQKs();
+	// printQKs();
 	var = computeVariance();
-	cerr << "computeVariance: "<<var<<endl;
 	for (map<int, double>::iterator itj = qkMap.begin(); itj != qkMap.end(); itj++) {
 		for (map<int, double>::iterator itk = qkMap.begin(); itk != qkMap.end(); itk++) {
 			acc += itj->first*itk->first*(EMatrix[make_pair(itj->first, itk->first)] - (itj->second * itk->second));

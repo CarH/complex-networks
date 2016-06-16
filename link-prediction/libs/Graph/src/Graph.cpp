@@ -282,3 +282,7 @@ set<pair<int,int> > Graph::getEdgesInPairs(){
 	}
 	return edg;
 }
+
+int Graph::getTotalEdges() {
+	return this->numEdges;
+}

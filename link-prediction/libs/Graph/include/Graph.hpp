@@ -88,5 +88,7 @@
 
 			std::set<std::pair<int,int> > getEdgesInPairs();
 
+			int getTotalEdges();
+
 	};
 #endif
