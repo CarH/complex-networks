@@ -487,21 +487,24 @@ void ComplexNetwork::calculatePredictorsBuffers(){
 		cerr<<"Calculating JACCARD for ALL PAIRS"<<endl;
 		coefficients  = this->jaccardAll();
 		sort(coefficients.begin(),coefficients.end(),comp);
-		this->jaccardCoeffBuffer.insert(this->jaccardCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+		int qntToStore = min((unsigned int)MAX_TO_STORE,(unsigned int)coefficients.size());
+		this->jaccardCoeffBuffer.insert(this->jaccardCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+qntToStore);
 		
 	}
 	if(this->adamicAdarCoeffBuffer.empty()){
 		cerr<<"Calculating ADAMIC ADAR for ALL PAIRS"<<endl;
 		coefficients  = this->adamicAdarAll();
 		sort(coefficients.begin(),coefficients.end(),comp);
-		this->adamicAdarCoeffBuffer.insert(this->adamicAdarCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+		int qntToStore = min((unsigned int)MAX_TO_STORE,(unsigned int)coefficients.size());
+		this->adamicAdarCoeffBuffer.insert(this->adamicAdarCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+qntToStore);
 	}
 
 	if(this->CNCoeffBuffer.empty()){
 		cerr<<"Calculating CN for ALL PAIRS"<<endl;
 		coefficients  = this->CNAll();
 		sort(coefficients.begin(),coefficients.end(),comp);
-		this->CNCoeffBuffer.insert(this->CNCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+MAX_TO_STORE);
+		int qntToStore = min((unsigned int)MAX_TO_STORE,(unsigned int)coefficients.size());
+		this->CNCoeffBuffer.insert(this->CNCoeffBuffer.end(),coefficients.begin(),coefficients.begin()+qntToStore);
 	}
 
 	

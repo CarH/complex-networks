@@ -19,6 +19,8 @@ int main(int argc, char const *argv[])
 	ComplexNetwork *compNet;
 	string filePath;
 
+	ofstream outFile;
+
 
 
 
@@ -48,7 +50,12 @@ int main(int argc, char const *argv[])
 		cerr<<"ERROR: Could not open "<<edgesRemovedFileName<<endl;
 		edgesRemoved.clear();
 	}
-
+	string outFileName = datasetName+"STDOUT.out";
+	outFile.open(datasetName.c_str());
+	if(!outFile.is_open()){
+		cerr<<"ERROR: could nor open file "<<endl;
+		exit(EXIT_FAILURE);
+	}
 	inFile.open(inFileName.c_str());
 	if (inFile.is_open()) {
 		while (inFile >> u >> v) {
@@ -70,30 +77,30 @@ int main(int argc, char const *argv[])
 		//FIM DEBUG
 		compNet = new ComplexNetwork(origNet);
 		
-		cout<<"====ORIGINAL NET===="<<endl;
-		cout<<"#Vertices: "<<origNet.getVerticesQnt()<<endl;
-		cout<<"#Edges: "<<origNet.getEdgesQnt()<<endl;
-		cout<<"AVG Degree: "<<origNet.getAvgDegree()<<endl;
-		cout<<"Density = "<<origNet.getDensity()<<endl;
-		cout<<"Global Clust() = " << compNet->globalClusteringCoefficient()<<endl;
+		outFile<<"====ORIGINAL NET===="<<endl;
+		outFile<<"#Vertices: "<<origNet.getVerticesQnt()<<endl;
+		outFile<<"#Edges: "<<origNet.getEdgesQnt()<<endl;
+		outFile<<"AVG Degree: "<<origNet.getAvgDegree()<<endl;
+		outFile<<"Density = "<<origNet.getDensity()<<endl;
+		outFile<<"Global Clust() = " << compNet->globalClusteringCoefficient()<<endl;
 		cerr<<"#Connected Components "<< origNet.getNumberOfConnectedComponents()<<endl;
-		cout<<"Assortativity: "<<compNet->computeAssortativity()<<endl;
+		outFile<<"Assortativity: "<<compNet->computeAssortativity()<<endl;
 
 		
-		// compNet->calculatePredictorsBuffers();
+		compNet->calculatePredictorsBuffers();
 		// // Generate reports to original network
-		// compNet->printVertexDegreeList("VertexDegreeList_"+datasetName);
-		// compNet->printDegreeDistribution("DegreeDistribution_"+datasetName);
-		// compNet->printDegreeHistogram("DegreeHistogram_"+datasetName);
-		// compNet->printLocalClustHistogram("LocalClustHistogram_"+datasetName);
-		// compNet->printPredictorsBuffer("Predictors_"+datasetName);
+		compNet->printVertexDegreeList("VertexDegreeList_"+datasetName);
+		compNet->printDegreeDistribution("DegreeDistribution_"+datasetName);
+		compNet->printDegreeHistogram("DegreeHistogram_"+datasetName);
+		compNet->printLocalClustHistogram("LocalClustHistogram_"+datasetName);
+		compNet->printPredictorsBuffer("Predictors_"+datasetName);
 
 		
 		//100 300 500 1000
-		// compNet->runAval("Results_"+datasetName,edgesRemoved);
+		compNet->runAval("Results_"+datasetName,edgesRemoved);
 		
 		
-		cout<<endl;
+		outFile<<endl;
 
 		inFile.close();
 		delete compNet;

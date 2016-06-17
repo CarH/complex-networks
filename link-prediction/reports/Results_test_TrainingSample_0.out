@@ -1,0 +1,74 @@
+Jaccard
+		Corrects: 0
+		L: 100
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+		Corrects: 0
+		L: 300
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+		Corrects: 0
+		L: 500
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+		Corrects: 0
+		L: 1000
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+CN 
+		Corrects: 0
+		L: 100
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+		Corrects: 0
+		L: 300
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+		Corrects: 0
+		L: 500
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+		Corrects: 0
+		L: 1000
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+Adamic
+		Corrects: 0
+		L: 100
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+		Corrects: 0
+		L: 300
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+		Corrects: 0
+		L: 500
+		Edges Removed: 1
+		Precision:0
+		Recall :0
+
+		Corrects: 0
+		L: 1000
+		Edges Removed: 1
+		Precision:0
+		Recall :0

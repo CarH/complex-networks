@@ -106,8 +106,8 @@ genSamples:
 	@echo
 	#######################################
 	# Generating Samples for GPlus dataset
-	@./generateSamples dataset/gplus.links gplus_PreProc_Edge_ $(NSAMPLES) 0
-	@./generateSamples dataset/gplus.links gplus_PreProc_Edge_ $(NSAMPLES) 1
+	@./generateSamples dataset/gplus.links gplus $(NSAMPLES) 0
+	@./generateSamples dataset/gplus.links gplus $(NSAMPLES) 1
 
 	@./generateSamples generatedDatasets/gplus_PreProc_Edge_.links gplus_PreProc_Edge_ $(NSAMPLES) 0
 	@./generateSamples generatedDatasets/gplus_PreProc_Edge_.links gplus_PreProc_Edge_ $(NSAMPLES) 1
@@ -116,15 +116,15 @@ genSamples:
 	@./generateSamples generatedDatasets/gplus_PreProc_Vert_.links gplus_PreProc_Vert_ $(NSAMPLES) 1
 
 	#######################################
-	# Generating Samples for Test dataset
-	@./generateSamples dataset/test.links test $(NSAMPLES) 0
-	@./generateSamples dataset/test.links test $(NSAMPLES) 1
+	# # Generating Samples for Test dataset
+	# @./generateSamples dataset/test.links test $(NSAMPLES) 0
+	# @./generateSamples dataset/test.links test $(NSAMPLES) 1
 
-	@./generateSamples generatedDatasets/test_PreProc_Edge_.links test_PreProc_Edge_ $(NSAMPLES) 0
-	@./generateSamples generatedDatasets/test_PreProc_Edge_.links test_PreProc_Edge_ $(NSAMPLES) 1
+	# @./generateSamples generatedDatasets/test_PreProc_Edge_.links test_PreProc_Edge_ $(NSAMPLES) 0
+	# @./generateSamples generatedDatasets/test_PreProc_Edge_.links test_PreProc_Edge_ $(NSAMPLES) 1
 
-	@./generateSamples generatedDatasets/test_PreProc_Vert_.links test_PreProc_Vert_ $(NSAMPLES) 0
-	@./generateSamples generatedDatasets/test_PreProc_Vert_.links test_PreProc_Vert_ $(NSAMPLES) 1
+	# @./generateSamples generatedDatasets/test_PreProc_Vert_.links test_PreProc_Vert_ $(NSAMPLES) 0
+	# @./generateSamples generatedDatasets/test_PreProc_Vert_.links test_PreProc_Vert_ $(NSAMPLES) 1
 	
 	@mv *.links ./generatedDatasets
 preProcExec:
@@ -143,7 +143,7 @@ preProcExec:
 
 	#######################################
 	# PreProc for Test dataset
-	@./preProc dataset/test.links test $(PREPROC_MIN_DEGREE) $(PREPROC_NUM_EDGES) $(PREPROC_TOP_N_DEG)
+	# @./preProc dataset/test.links test $(PREPROC_MIN_DEGREE) $(PREPROC_NUM_EDGES) $(PREPROC_TOP_N_DEG)
 
 	@mv *.links ./generatedDatasets
 exec:
@@ -151,42 +151,62 @@ exec:
 	# EXEC for Facebook dataset
 	# _PreProc_Edge_
 	# NO PREPROC
+	@mkdir -p reports
+
 	@./prog generatedDatasets/facebook_TrainingSample_0.links facebook_TrainingSample_0 
+	@mv *.out ./reports
 	@./prog generatedDatasets/facebook_TrainingSample_0_keepCompConex.links facebook_TrainingSample_0_keepCompConex
+	@mv *.out ./reports
 	# PREPROC EDGE
 	@./prog generatedDatasets/facebook_PreProc_Edge__TrainingSample_0.links facebook_PreProc_Edge__TrainingSample_0 
+	@mv *.out ./reports
 	@./prog generatedDatasets/facebook_PreProc_Edge__TrainingSample_0_keepCompConex.links facebook_PreProc_Edge__TrainingSample_0_keepCompConex
 	# PREPROCVERT
 	@./prog generatedDatasets/facebook_PreProc_Vert__TrainingSample_0.links facebook_PreProc_Vert__TrainingSample_0
+	@mv *.out ./reports
 	@./prog generatedDatasets/facebook_PreProc_Vert__TrainingSample_0_keepCompConex.links facebook_PreProc_Vert__TrainingSample_0_keepCompConex
+	@mv *.out ./reports
 	@echo
 	#######################################
 	# EXEC for Foursquare dataset
 	# NO PREPROC
 	@./prog generatedDatasets/foursquare_TrainingSample_0.links foursquare_TrainingSample_0
+	@mv *.out ./reports
 	@./prog generatedDatasets/foursquare_TrainingSample_0_keepCompConex.links foursquare_TrainingSample_0_keepCompConex
+	@mv *.out ./reports
 	# PREPROC EDGE
 	@./prog generatedDatasets/foursquare_PreProc_Edge__TrainingSample_0.links foursquare_PreProc_Edge__TrainingSample_0
+	@mv *.out ./reports
 	@./prog generatedDatasets/foursquare_PreProc_Edge__TrainingSample_0_keepCompConex.links foursquare_PreProc_Edge__TrainingSample_0_keepCompConex
+	@mv *.out ./reports
 	# PREPROCVERT
 	@./prog generatedDatasets/foursquare_PreProc_Vert__TrainingSample_0.links foursquare_PreProc_Vert__TrainingSample_0 
+	@mv *.out ./reports
 	@./prog generatedDatasets/foursquare_PreProc_Vert__TrainingSample_0_keepCompConex.links foursquare_PreProc_Vert__TrainingSample_0_keepCompConex
+	@mv *.out ./reports
 	@echo
 	#######################################
 	# EXEC for GPlus dataset
 	# NO PREPROC
 	@./prog generatedDatasets/gplus_TrainingSample_0.links gplus_TrainingSample_0 
+	@mv *.out ./reports
 	@./prog generatedDatasets/gplus_TrainingSample_0_keepCompConex.links gplus_TrainingSample_0_keepCompConex
-
+	@mv *.out ./reports
 	# PREPROC EDGE
 	@./prog generatedDatasets/gplus_PreProc_Edge__TrainingSample_0.links gplus_PreProc_Edge__TrainingSample_0 
+	@mv *.out ./reports
 	@./prog generatedDatasets/gplus_PreProc_Edge__TrainingSample_0_keepCompConex.links gplus_PreProc_Edge__TrainingSample_0_keepCompConex
-
+	@mv *.out ./reports
 	# PREPROCVERT
 	@./prog generatedDatasets/gplus_PreProc_Vert__TrainingSample_0.links gplus_PreProc_Vert__TrainingSample_0 
+	@mv *.out ./reports
 	@./prog generatedDatasets/gplus_PreProc_Vert__TrainingSample_0_keepCompConex.links gplus_PreProc_Vert__TrainingSample_0_keepCompConex
 
-	
+	@mv *.out ./reports
+genSampleTest:
+	@./generateSamples dataset/test.links test $(NSAMPLES) 0
+runTestTosco:
+	# @./prog generatedDatasets/test_TrainingSample_0.links test_TrainingSample_0
 clean:
 	rm -rf libraries/ *.o prog generateSamples preProc
 
