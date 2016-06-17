@@ -84,25 +84,26 @@ int main(int argc, char const *argv[])
 		outFile<<"Density = "<<origNet.getDensity()<<endl;
 		outFile<<"Global Clust() = " << compNet->globalClusteringCoefficient()<<endl;
 		cerr<<"#Connected Components "<< origNet.getNumberOfConnectedComponents()<<endl;
-		outFile<<"Assortativity: "<<compNet->computeAssortativity()<<endl;
+		// outFile<<"Assortativity: "<<compNet->computeAssortativity()<<endl;
 
 		
-		compNet->calculatePredictorsBuffers();
-		// // Generate reports to original network
+		// compNet->calculatePredictorsBuffers();
+		// // // Generate reports to original network
 		compNet->printVertexDegreeList("VertexDegreeList_"+datasetName);
 		compNet->printDegreeDistribution("DegreeDistribution_"+datasetName);
 		compNet->printDegreeHistogram("DegreeHistogram_"+datasetName);
 		compNet->printLocalClustHistogram("LocalClustHistogram_"+datasetName);
-		compNet->printPredictorsBuffer("Predictors_"+datasetName);
+		// compNet->printPredictorsBuffer("Predictors_"+datasetName);
 
 		
 		//100 300 500 1000
-		compNet->runAval("Results_"+datasetName,edgesRemoved);
+		// compNet->runAval("Results_"+datasetName,edgesRemoved);
 		
 		
 		outFile<<endl;
 
 		inFile.close();
+		outFile.close();
 		delete compNet;
 	}
 

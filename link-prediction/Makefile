@@ -207,6 +207,30 @@ genSampleTest:
 	@./generateSamples dataset/test.links test $(NSAMPLES) 0
 runTestTosco:
 	# @./prog generatedDatasets/test_TrainingSample_0.links test_TrainingSample_0
+getDatabasesProp:
+	@./prog dataset/facebook.links facebook
+	@./prog generatedDatasets/facebook_PreProc_Vert_.links facebook_PreProc_Vert_
+	@./prog generatedDatasets/facebook_PreProc_Edge_.links facebook_PreProc_Edge_ 
+	@echo
+	#######################################
+	# getDataBasesPro for Foursquare dataset
+	@./prog dataset/foursquare.links foursquare 
+	@./prog generatedDatasets/foursquare_PreProc_Vert_.links foursquare_PreProc_Vert_
+	@./prog generatedDatasets/foursquare_PreProc_Edge_.links foursquare_PreProc_Edge_
+	@echo
+	#######################################
+	# getDataBasesPro for GPlus dataset
+	@./prog dataset/gplus.links gplus 
+	@./prog generatedDatasets/gplus_PreProc_Vert_.links gplus_PreProc_Vert_
+	@./prog generatedDatasets/gplus_PreProc_Edge_.links gplus_PreProc_Edge_
+
+	@mv *.out ./reports
+	
+	
+	#######################################
+	# getDataBasesPro for Test dataset
+	# @./preProc dataset/test.links test $(PREPROC_MIN_DEGREE) $(PREPROC_NUM_EDGES) $(PREPROC_TOP_N_DEG)
+
 clean:
 	rm -rf libraries/ *.o prog generateSamples preProc
 
