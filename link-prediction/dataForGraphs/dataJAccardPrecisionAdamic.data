@@ -1,2 +1,4 @@
 Orig Pre_Vert Pre_VertCompCon  Pre_Aresta OrigCompCon Pre_VertCompCon Pre_ArestaCompCon
 Facebook 0.722 0.731 0.714 0.731 0.716 0.714
+Foursquare 0.143 0.143 0.137 0.146 0.143 0.147
+GPlus 0.087 0.102 0.086 0.119 0.107
